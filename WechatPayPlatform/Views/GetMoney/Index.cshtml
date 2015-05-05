@@ -1,0 +1,60 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2> 欢迎使用</h2>
+<div id="content">
+    <p>
+        <span id="macname"> 您正在使用</span>
+
+        <a href="#">充值</a>
+    </p>
+    <p>
+        <input type="number" value="5" id="money" style="width:48px" max="1000" min="1" /> 元
+        <input type="button" value="确认使用" id="confirm" />
+    </p>
+</div>
+<script type="text/javascript">
+    function getUrlVars() {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+    function getUrlVar(name) {
+        return getUrlVars()[name];
+    }
+
+    $(document).ready(function () {
+        var macname = getUrlVar('mname');
+        var openid = getUrlVar('openid');
+        var mid = getUrlVar('mid');
+        //拼接设备名称
+        $('#macname').html("您正在使用" + macname + "设备，请选择充值金额或");
+
+        //获得余额信息
+        $.get('/api/payinfo/getbalance?openid=' + openid, null, function (data) {
+            $('#macname').html("您正在使用 " + macname + "设备，您当前余额为 " + data + " ，请选择充值金额或");
+        });
+
+        //确认支付
+        $('#confirm').click(function () {
+            var money = $('#money').val();
+            var serviceaddress = '/api/payinfo/ConfirmUse?openid=' + openid + '&macid=' + mid + '&count=' + money;
+           // alert(serviceaddress);
+            $.get(serviceaddress, null, function (data) {
+                if (data) {
+                    $('#content').html('<p>预付费成功！<p><p>您使用的是' + macname + '设备<p><p>本次付费' + money + '元<p>');
+                }
+                else {
+                    $('#content').html('<p>预付费失败！<p>');
+                }
+            });
+        });
+
+    });
+</script>
