@@ -19,5 +19,7 @@ namespace WechatPayPlatform.Models
         public DbSet<AccessToken> AccessTokenSet { get; set; }
 
         public DbSet<Bill> BillSet { get; set; }
+
+        public DbSet<ReachargeBill> RechargeBillSet { get; set; }
     }
 }

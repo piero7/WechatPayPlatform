@@ -1,0 +1,63 @@
+﻿@{
+    ViewBag.Title = "充值";
+}
+
+<h2 style="text-align:center">自助充值系统</h2>
+<div style="padding-left:30% ;width:100%">
+    <p>请选择充值金额：</p>
+
+    <p style="text-align:left">
+        <input type="number" value="1" id="count" style="margin-left:30px;width:50%;" />
+    </p>
+    <p style="text-align:left">
+        <input type="button" id="confirm" value="充值"  style="margin-right:30px;"/>
+    </p>
+    <p>
+        <span id="tit"></span>
+    </p>
+</div>
+
+<script type="text/javascript">
+    var openid = '';
+    var non = '';
+
+    $(document).ready(function () {
+        var code = getUrlVar('code');
+
+
+
+
+        //alert(code);
+        $.get('~/../../api/PayInfo/GetOpenidByCode?code=' + code, '', function (data) {
+            openid = data;
+            //alert(openid);
+        });
+
+        $('#confirm').click(function () {
+            $('#confirm').attr('disabled', 'disabled');
+            $('#confirm').val("支付中...");
+            $.get('~/../../api/PayInfo/GetPayParams?openid=' + openid + '&count=' + $('#count').val(), null, function (data) {
+                //alert(data);
+                pp = data;
+                non = pp.nonceStr;
+                // alert(non);
+                WeixinJSBridge.invoke('getBrandWCPayRequest', pp, function (res) {
+                    //alert(res.err_msg);
+                    var issuccess = false;
+                    if (res.err_msg == "get_brand_wcpay_request:ok") {
+                        // alert('ok!!');
+                        $('#tit').html("充值成功");
+                        issuccess = true;
+                    } else {
+                        $('#tit').html("充值失败");
+                    }
+                    $.get('~/../../api/PayInfo/FinishPay?non=' + non + '&issuccess=' + issuccess, '', function (data) {
+                        if (data) {
+                            alert('充值完成，请关闭网页。')
+                        }
+                    })
+                });
+            });
+        });
+    });
+</script>

@@ -163,7 +163,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\GetMoneyController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\PayHelpController.cs" />
+    <Compile Include="Controllers\PayController.cs" />
     <Compile Include="Controllers\PayInfoController.cs" />
     <Compile Include="Migrations\201505031559442_addbill.cs" />
     <Compile Include="Migrations\201505031559442_addbill.Designer.cs">
@@ -172,6 +172,26 @@
     <Compile Include="Migrations\201505031624073_addBillinfo.cs" />
     <Compile Include="Migrations\201505031624073_addBillinfo.Designer.cs">
       <DependentUpon>201505031624073_addBillinfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201505051654462_addRechargeBill.cs" />
+    <Compile Include="Migrations\201505051654462_addRechargeBill.Designer.cs">
+      <DependentUpon>201505051654462_addRechargeBill.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201505051658504_udRechargeBillDate.cs" />
+    <Compile Include="Migrations\201505051658504_udRechargeBillDate.Designer.cs">
+      <DependentUpon>201505051658504_udRechargeBillDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201505051707208_udRechargeBillIsSuccess.cs" />
+    <Compile Include="Migrations\201505051707208_udRechargeBillIsSuccess.Designer.cs">
+      <DependentUpon>201505051707208_udRechargeBillIsSuccess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201505051712473_udRechargeBillCount.cs" />
+    <Compile Include="Migrations\201505051712473_udRechargeBillCount.Designer.cs">
+      <DependentUpon>201505051712473_udRechargeBillCount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201505051722289_udRechargeBillNocneStr.cs" />
+    <Compile Include="Migrations\201505051722289_udRechargeBillNocneStr.Designer.cs">
+      <DependentUpon>201505051722289_udRechargeBillNocneStr.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Bill.cs" />
     <Compile Include="Models\PayParms.cs" />
@@ -266,6 +286,7 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\HelpPageApiModel.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <None Include="Properties\PublishProfiles\WebApiToFile.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
     <Content Include="Scripts\jquery-1.8.2.min.js" />
@@ -281,6 +302,7 @@
     <Content Include="Scripts\knockout-2.2.0.debug.js" />
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\wechatHelper.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -311,6 +333,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Wechat.ashx" />
     <Content Include="Views\GetMoney\Index.cshtml" />
+    <Content Include="Views\Pay\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -330,6 +353,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201505031624073_addBillinfo.resx">
       <DependentUpon>201505031624073_addBillinfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201505051654462_addRechargeBill.resx">
+      <DependentUpon>201505051654462_addRechargeBill.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201505051658504_udRechargeBillDate.resx">
+      <DependentUpon>201505051658504_udRechargeBillDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201505051707208_udRechargeBillIsSuccess.resx">
+      <DependentUpon>201505051707208_udRechargeBillIsSuccess.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201505051712473_udRechargeBillCount.resx">
+      <DependentUpon>201505051712473_udRechargeBillCount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201505051722289_udRechargeBillNocneStr.resx">
+      <DependentUpon>201505051722289_udRechargeBillNocneStr.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -1,1 +1,1 @@
-﻿<%@ WebHandler Language="C#" CodeBehind="Wechat.ashx.cs" Class="FirstPencil.Wechat" %>
+﻿<%@ WebHandler Language="C#" CodeBehind="Wechat.ashx.cs" Class="WechatPayPlatform.Wechat" %>

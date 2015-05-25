@@ -8,11 +8,10 @@ using System.Web;
 using System.Web.Script.Serialization;
 using WechatPayPlatform.Models;
 
-namespace WechatPayPlatform
+namespace WechatPayPlatform.Controllers
 {
-    public class Helper
+     public partial class Helper
     {
-
         static public User GetUserInfo(User user)
         {
             var db = new ModelContext();
@@ -96,6 +95,26 @@ namespace WechatPayPlatform
             context.SaveChanges();
 
             return newToken;
+        }
+        public bool WriteTxt(string str)
+        {
+            try
+            {
+                FileStream fs = new FileStream(HttpContext.Current.Server.MapPath("/bugLog.txt"), FileMode.Append);
+                StreamWriter sw = new StreamWriter(fs);
+                //开始写入  
+                sw.WriteLine(str + "\r\n" + DateTime.Now);
+                //清空缓冲区  
+                sw.Flush();
+                //关闭流  
+                sw.Close();
+                fs.Close();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
     }
