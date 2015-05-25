@@ -165,6 +165,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PayController.cs" />
     <Compile Include="Controllers\PayInfoController.cs" />
+    <Compile Include="Controllers\SocketController.cs" />
     <Compile Include="Migrations\201505031559442_addbill.cs" />
     <Compile Include="Migrations\201505031559442_addbill.Designer.cs">
       <DependentUpon>201505031559442_addbill.cs</DependentUpon>
@@ -194,6 +195,7 @@
       <DependentUpon>201505051722289_udRechargeBillNocneStr.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Bill.cs" />
+    <Compile Include="Models\Machine.cs" />
     <Compile Include="Models\PayParms.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
