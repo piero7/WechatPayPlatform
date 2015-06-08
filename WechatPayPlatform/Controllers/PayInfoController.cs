@@ -194,74 +194,40 @@ namespace WechatPayPlatform.Controllers
                 Number = number,
                 UserId = user.UserId,
             };
+            db.BillSet.Add(bill);
+            db.SaveChanges();
             #region debug for user 11
-            if (openid == "11")
-            {
-                bill.IsSuccess = true;
-                bill.Remaeks = "Test bill for user 11 .";
-                db.BillSet.Add(bill);
-                db.SaveChanges();
-                return true;
-            }
+            //if (openid == "11")
+            //{
+            //    bill.IsSuccess = true;
+            //    bill.Remaeks = "Test bill for user 11 .";
+            //    db.BillSet.Add(bill);
+            //    db.SaveChanges();
+            //    return true;
+            //}
             #endregion
-            string recvStr = "";
+            // string recvStr = "";
             if (System.Configuration.ConfigurationManager.AppSettings["toservice"] == "false")
             {
-                recvStr = "success";
+                return true;
             }
             else
             {
+                SocketController sc = new SocketController();
+                sc.SendPayMessage(macid, count, bill.BillId);
 
-                int port = int.Parse(System.Configuration.ConfigurationManager.AppSettings["serviceport"]);
-                string host = System.Configuration.ConfigurationManager.AppSettings["serviceaddress"];
-                //创建终结点EndPoint
-                IPAddress ip = IPAddress.Parse(host);
-                IPEndPoint ipe = new IPEndPoint(ip, port);   //把ip和端口转化为IPEndPoint的实例
 
-                //创建Socket并连接到服务器
-                Socket c = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);   //  创建Socket
-                try
-                {
-                    c.Connect(ipe); //连接到服务器
-
-                    string noncestr = "";
-                    string time = Helper.getTimestamp();
-                    var token = Helper.GetMD5(macid + count.ToString() + noncestr + number + time + System.Configuration.ConfigurationManager.AppSettings["servicetoken"]);
-                    //向服务器发送信息
-                    string sendStr = string.Format("macid={0}&count={1}&noncestr{2}&orderid={3}&time={5}&token={4}", macid, count, noncestr, number, token, Helper.getTimestamp());
-                    byte[] bs = Encoding.ASCII.GetBytes(sendStr);   //把字符串编码为字节
-
-                    c.Send(bs, bs.Length, 0); //发送信息
-
-                    //接受从服务器返回的信息
-
-                    byte[] recvBytes = new byte[1024];
-                    int bytes;
-                    bytes = c.Receive(recvBytes, recvBytes.Length, 0);    //从服务器端接受返回信息
-                    recvStr += Encoding.ASCII.GetString(recvBytes, 0, bytes);
-                    c.Close();
-                }
-                catch (Exception ex)
-                {
-
-                    bill.Remaeks = ex.Message;
-                }
-                finally
-                {
-                    c.Close();
-                    c.Dispose();
-                }
             }
-            bool ret = false;
+            /* bool ret = false;*/
             //验证返回结果
-            if (recvStr.ToLower() == "success")
-            {
-                ret = true;
-            }
-            db.BillSet.Add(bill);
+            //             if (recvStr.ToLower() == "success")
+            //             {
+            //                 ret = true;
+            //             }
+            //db.BillSet.Add(bill);
             user.Balance -= count;
             db.SaveChanges();
-            return ret;
+            return true;
 
         }
 

@@ -36,8 +36,8 @@ namespace TestMachineClient
                 Console.WriteLine("failed!!\r\n " + e.Message);
             }
 
-            int retNum = client.Receive(result);
-            Console.WriteLine("Get reserve message :{0}", Encoding.ASCII.GetString(result, 0, retNum));
+            //int retNum = client.Receive(result);
+           // Console.WriteLine("Get reserve message :{0}", Encoding.ASCII.GetString(result, 0, retNum));
             string sendMessage = "";
             int i = 0;
             while (true)

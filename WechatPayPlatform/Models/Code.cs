@@ -25,18 +25,18 @@ namespace WechatPayPlatform.Models
 
     }
 
-    public class Machine
-    {
-        [Key]
-        public int MachineId { get; set; }
+  //  public class Machine
+    //{
+    //    [Key]
+    //    public int MachineId { get; set; }
 
-        public string Name { get; set; }
+    //    public string Name { get; set; }
 
-        public string InnerId { get; set; }
+    //    public string InnerId { get; set; }
 
-        public string Address { get; set; }
+    //    public string Address { get; set; }
 
-        public string Remarks { get; set; }
+    //    public string Remarks { get; set; }
 
-    }
+    //}
 }

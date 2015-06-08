@@ -70,7 +70,7 @@ namespace WechatPayPlatform
                         {
                             Helper.GetUserInfo(user);
                         }
-                        ret = checkXML(requestXML, string.Format("{0}，我们在这等你很久了，点击菜单里的“扫码洗车”开始使用吧,或者点击菜单中的“充值”按钮完成充值。", user.NickName));
+                        ret = checkXML(requestXML, string.Format("尊敬的车主{0}，您好！请点击菜单“扫码洗车”获得服务，谢谢", user.NickName));
                         db.SaveChanges();
                     }
                     //|| requestXML.Event.ToLower() == "scancode_waitmsg" || requestXML.Event.ToLower() == "click"||
@@ -81,7 +81,7 @@ namespace WechatPayPlatform
                         var code = db.CodeSet.Include("Machine").FirstOrDefault(c => c.EventKey == requestXML.EventKey);
                         if (code != null && code.Machine != null)
                         {
-                            ret = checkXML(requestXML, string.Format("欢迎使用爱点车联自助洗车机,<a href = \"http://www.anjismart.com/ad/getMoney/index?openid={0}&mid={1}&mname={2}\">点击开始使用</a>。", requestXML.FromUserName, code.Machine.InnerId, code.Machine.Name));
+                            ret = checkXML(requestXML, string.Format("<a href = \"http://www.anjismart.com/ad/getMoney/index?openid={0}&mid={1}&mname={2}\">请点击这里支付,建议每次3元。</a>", requestXML.FromUserName, code.Machine.InnerId, code.Machine.Name));
                         }
                     }
                     else if (requestXML.Event.ToLower() == "scancode_waitmsg")
@@ -91,7 +91,7 @@ namespace WechatPayPlatform
                         var code = db.CodeSet.Include("Machine").FirstOrDefault(c => c.Content == requestXML.ScanResult);
                         if (code != null && code.Machine != null)
                         {
-                            ret = checkXML(requestXML, string.Format("欢迎使用爱点车联自助洗车机,<a href = \"http://www.anjismart.com/ad/getMoney/index?openid={0}&mid={1}&mname={2}\">点击开始使用</a>。", requestXML.FromUserName, code.Machine.InnerId, code.Machine.Name));
+                            ret = checkXML(requestXML, string.Format("<a href = \"http://www.anjismart.com/ad/getMoney/index?openid={0}&mid={1}&mname={2}\">请点击这里支付,建议每次3元。</a>", requestXML.FromUserName, code.Machine.InnerId, code.Machine.Name));
                         }
                     }
                 }

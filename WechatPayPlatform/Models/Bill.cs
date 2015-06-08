@@ -25,7 +25,14 @@ namespace WechatPayPlatform.Models
 
         public bool IsSuccess { get; set; }
 
+        public int? MachineId { get; set; }
+
+        public virtual Machine Machine { get; set; }
+
+        public string innderNumber { get; set; }
+
         public string Remaeks { get; set; }
+
     }
 
     public class ReachargeBill
@@ -51,5 +58,14 @@ namespace WechatPayPlatform.Models
         public double? Count { get; set; }
 
         public string NonceStr { get; set; }
+    }
+
+    public enum BillStatus
+    {
+        Unknown = 0,
+        Sended = 1,
+        Success = 2,
+        Error = 3,
+        Create = 4,
     }
 }

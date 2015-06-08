@@ -1,15 +1,15 @@
 ﻿html {
-    background-color: #e2e2e2;
+    background-color: rgba(228, 143, 24, 0.28);
     margin: 0;
     padding: 0;
 }
 
 body {
-    background-color: #fff;
+    /*background-color: #fff;*/
     border-top: solid 10px #000;
     color: #333;
-    font-size: .85em;
-    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+    font-size: .95em;
+    font-family:  'Microsoft YaHei UI' , Verdana, Helvetica, Sans-Serif;
     margin: 0;
     padding: 0;
 }
