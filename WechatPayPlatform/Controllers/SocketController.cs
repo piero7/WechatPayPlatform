@@ -12,7 +12,7 @@ namespace WechatPayPlatform.Controllers
 {
     public class SocketController : ApiController
     {
-        public static List<Models.Bill>
+        //public static List<Models.Bill>
 
         [HttpGet]
         public bool RefreshOrderStatus(string machineNumber, string orderNumber)
@@ -21,7 +21,7 @@ namespace WechatPayPlatform.Controllers
         }
 
         /// <summary>
-        /// Socket服务器提交设备
+        /// Socket服务器提交设备上线注册及心跳
         /// </summary>
         /// <param name="machineId"></param>
         /// <returns></returns>
@@ -69,7 +69,7 @@ namespace WechatPayPlatform.Controllers
         /// <param name="machineNumber">设备号</param>
         /// <param name="orderNumber">订单号</param>
         /// <param name="count">金额</param>
-        [HttpGet]
+        //[HttpGet]
         public void SendPayMessage(string machineNumber, int count, int billId)
         {
 

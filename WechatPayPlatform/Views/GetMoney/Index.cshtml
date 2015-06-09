@@ -54,6 +54,9 @@
         $('#confirm').click(function () {
             $('#confirm').css({ visibility: "hidden" });
             var money = $('#money').val();
+            if (money < rmoney) {
+                $('#content').html('<p>对不起，您的余额不足！请<a href="~/../../pay/index">充值</a>后使用。<p>');
+            }
             var serviceaddress = '~/../../api/payinfo/ConfirmUse?openid=' + openid + '&macid=' + mid + '&count=' + money;
             // alert(serviceaddress);
             $.get(serviceaddress, null, function (data) {

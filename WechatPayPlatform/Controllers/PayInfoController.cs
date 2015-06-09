@@ -18,6 +18,12 @@ namespace WechatPayPlatform.Controllers
 {
     public class PayInfoController : ApiController
     {
+        /// <summary>
+        /// 回传支付信息
+        /// </summary>
+        /// <param name="non"></param>
+        /// <param name="issuccess"></param>
+        /// <returns></returns>
         [HttpGet]
         public bool FinishPay(string non, bool issuccess)
         {
@@ -47,7 +53,15 @@ namespace WechatPayPlatform.Controllers
             return ret;
 
         }
+        
 
+
+        /// <summary>
+        /// 申请PrePayId并封装支付参数
+        /// </summary>
+        /// <param name="openid">支付者OpenId</param>
+        /// <param name="count">金额</param>
+        /// <returns></returns>
         [HttpGet]
         public PayParms GetPayParams(string openid, double count)
         {
@@ -128,6 +142,13 @@ namespace WechatPayPlatform.Controllers
 
         }
 
+
+
+        /// <summary>
+        /// 通过网页获取的code换取用户openid
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         [HttpGet]
         public string GetOpenidByCode(string code)
         {
@@ -155,12 +176,15 @@ namespace WechatPayPlatform.Controllers
                 openid = resStr;
             }
             return openid;
-
-
-
         }
 
 
+
+        /// <summary>
+        /// 获取用户余额
+        /// </summary>
+        /// <param name="openid"></param>
+        /// <returns></returns>
         [HttpGet]
         public double GetBalance(string openid)
         {
@@ -177,6 +201,15 @@ namespace WechatPayPlatform.Controllers
 
         }
 
+
+
+        /// <summary>
+        /// 生成支付订单并通知Socket服务器
+        /// </summary>
+        /// <param name="openid"></param>
+        /// <param name="macid"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
         [HttpGet]
         public bool ConfirmUse(string openid, string macid, int count)
         {
@@ -215,8 +248,6 @@ namespace WechatPayPlatform.Controllers
             {
                 SocketController sc = new SocketController();
                 sc.SendPayMessage(macid, count, bill.BillId);
-
-
             }
             /* bool ret = false;*/
             //验证返回结果
@@ -231,6 +262,8 @@ namespace WechatPayPlatform.Controllers
 
         }
 
+
+        [Obsolete("该方法为测试方法，请误调用。",true)]
         [HttpGet]
         public Models.PayParms GetPayParm()
         {
