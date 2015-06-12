@@ -199,6 +199,7 @@
       <DependentUpon>201505260610067_addMachine.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Bill.cs" />
+    <Compile Include="Models\Foreign.cs" />
     <Compile Include="Models\Machine.cs" />
     <Compile Include="Models\PayParms.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
@@ -217,6 +218,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Code.cs" />
     <Compile Include="Models\ModelContext.cs" />
+    <Compile Include="Models\Station.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Wechat.ashx.cs">

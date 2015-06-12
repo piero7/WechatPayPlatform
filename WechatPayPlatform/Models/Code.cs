@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
+using System.Web.UI;
 
 namespace WechatPayPlatform.Models
 {
@@ -17,15 +18,25 @@ namespace WechatPayPlatform.Models
         public string Content { get; set; }
 
         public string EventKey { get; set; }
+    }
 
+    public class MachineCode : Code
+    {
         public int? MachineId { get; set; }
 
         [ForeignKey("MachineId")]
         public virtual Machine Machine { get; set; }
-
     }
 
-  //  public class Machine
+    public class StationCode : Code
+    {
+        public int? StationId { get; set; }
+
+        [ForeignKey("StationId")]
+        public virtual Station Station { get; set; }
+    }
+
+    //  public class Machine
     //{
     //    [Key]
     //    public int MachineId { get; set; }

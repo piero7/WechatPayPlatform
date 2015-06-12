@@ -29,6 +29,8 @@ namespace WechatPayPlatform.Models
 
         public virtual Machine Machine { get; set; }
 
+        
+
         public string innderNumber { get; set; }
 
         public string Remaeks { get; set; }
@@ -67,5 +69,22 @@ namespace WechatPayPlatform.Models
         Success = 2,
         Error = 3,
         Create = 4,
+    }
+
+    public enum BillType
+    {
+        Unknown = 0,
+        /// <summary>
+        /// 到店
+        /// </summary>
+        Shop =1,
+        /// <summary>
+        /// 自助洗
+        /// </summary>
+        Diy =2,
+        /// <summary>
+        /// 上门
+        /// </summary>
+        Come=3,
     }
 }
