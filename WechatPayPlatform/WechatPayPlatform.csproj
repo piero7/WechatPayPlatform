@@ -218,6 +218,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Code.cs" />
     <Compile Include="Models\ModelContext.cs" />
+    <Compile Include="Models\Shop.cs" />
     <Compile Include="Models\Station.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
