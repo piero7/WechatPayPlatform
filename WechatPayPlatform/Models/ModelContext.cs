@@ -10,20 +10,44 @@ namespace WechatPayPlatform.Models
     {
         public ModelContext() : base("ModelContextConnString") { }
 
-        public DbSet<User> UserSet { get; set; }
+        public DbSet<WechatUser> WechatUserSet { get; set; }
 
-        public DbSet<Code> CodeSet { get; set; }
+        public DbSet<UserInfo> UserInfoSet { get; set; }
+
+        public DbSet<MachineCode> MachineCodeSet { get; set; }
+
+        public DbSet<StationCode> StationCodeSet { get; set; }
 
         // public DbSet<Machine> MachineSet { get; set; }
 
         public DbSet<AccessToken> AccessTokenSet { get; set; }
 
-        public DbSet<Bill> BillSet { get; set; }
+        public DbSet<MachineBill> MachineBillSet { get; set; }
+
+        public DbSet<ComeBill> ComeBillSet { get; set; }
 
         public DbSet<ReachargeBill> RechargeBillSet { get; set; }
 
         public DbSet<Machine> MachineSet { get; set; }
 
         public DbSet<MachineMessageLog> MachineMessageSet { get; set; }
+
+        public DbSet<Station> StationSet { get; set; }
+
+        public DbSet<Neighborhood> NeighborhoodSet { get; set; }
+
+        public DbSet<Area> AreaSet { get; set; }
+
+        public DbSet<Administrator> AdminSet { get; set; }
+
+        public DbSet<CarInfo> CarInfoSet { get; set; }
+
+
+        #region Shop
+        public DbSet<Shop> ShopSet { get; set; }
+
+        public DbSet<Package> PackageSet { get; set; }
+        #endregion
+
     }
 }

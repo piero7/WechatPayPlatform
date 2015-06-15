@@ -82,11 +82,11 @@ namespace WechatPayPlatform.Controllers
             var random = new Random();
         getRandom: orderStr += random.Next(9999).ToString().PadLeft(4, '0');
             var db = new Models.ModelContext();
-            if (db.BillSet.Any(item => item.innderNumber == orderStr))
+            if (db.MachineBillSet.Any(item => item.innderNumber == orderStr))
             {
                 goto getRandom;
             }
-            db.BillSet.FirstOrDefault(item => item.BillId == billId).innderNumber = orderStr;
+            db.MachineBillSet.FirstOrDefault(item => item.BillId == billId).innderNumber = orderStr;
             db.SaveChanges();
 
             byte[] msg = System.Text.Encoding.ASCII.GetBytes(machineNumber.ToUpper() + GetHexString(count).PadLeft(3, '0') + orderStr);

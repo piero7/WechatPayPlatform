@@ -7,7 +7,7 @@ using System.Web;
 
 namespace WechatPayPlatform.Models
 {
-    public class Bill
+   public class Bill
     {
         [Key]
         public int BillId { get; set; }
@@ -17,7 +17,7 @@ namespace WechatPayPlatform.Models
         public int? UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public virtual User User { get; set; }
+        public virtual WechatUser User { get; set; }
 
         public DateTime? CreateDate { get; set; }
 
@@ -25,18 +25,59 @@ namespace WechatPayPlatform.Models
 
         public bool IsSuccess { get; set; }
 
-        public int? MachineId { get; set; }
-
-        public virtual Machine Machine { get; set; }
-
-        
 
         public string innderNumber { get; set; }
 
         public string Remaeks { get; set; }
+    }
+
+
+
+    /// <summary>
+    /// 自助洗订单
+    /// </summary>
+    public class MachineBill : Bill
+    {
+        public int? MachineId { get; set; }
+
+        public virtual Machine Machine { get; set; }
 
     }
 
+    /// <summary>
+    /// 上门洗订单
+    /// </summary>
+    public class ComeBill : Bill
+    {
+        public DateTime? StartTime { get; set; }
+
+        public DateTime? EndTime { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        /// <summary>
+        /// 车牌号
+        /// </summary>
+        public string CarNumber { get; set; }
+
+        public string CarInfo { get; set; }
+
+        public string Address { get; set; }
+
+        public string Describe { get; set; }
+
+        public string Remarks { get; set; }
+
+        public DateTime? FinishTime { get; set; }
+
+        public ComeBillStatus Status { get; set; }
+
+    }
+
+
+    /// <summary>
+    /// 充值订单
+    /// </summary>
     public class ReachargeBill
     {
         [Key]
@@ -51,7 +92,7 @@ namespace WechatPayPlatform.Models
         public int? UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public virtual User User { get; set; }
+        public virtual WechatUser User { get; set; }
 
         public string Remarks { get; set; }
 
@@ -77,14 +118,24 @@ namespace WechatPayPlatform.Models
         /// <summary>
         /// 到店
         /// </summary>
-        Shop =1,
+        Shop = 1,
         /// <summary>
         /// 自助洗
         /// </summary>
-        Diy =2,
+        Diy = 2,
         /// <summary>
         /// 上门
         /// </summary>
-        Come=3,
+        Come = 3,
+    }
+
+    public enum ComeBillStatus
+    {
+        Unknown = 0,
+        ToConfirm = 1,
+        Working = 2,
+        ToPay = 3,
+        Finish = 4,
+        Complain = 10,
     }
 }

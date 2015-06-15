@@ -12,7 +12,7 @@ namespace WechatPayPlatform.Controllers
 {
      public partial class Helper
     {
-        static public User GetUserInfo(User user)
+        static public WechatUser GetUserInfo(WechatUser user)
         {
             var db = new ModelContext();
             //var user = db.UserSet.FirstOrDefault(u => u.OpenId == userOpenId);

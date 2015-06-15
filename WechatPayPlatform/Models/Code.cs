@@ -20,6 +20,9 @@ namespace WechatPayPlatform.Models
         public string EventKey { get; set; }
     }
 
+    /// <summary>
+    /// 自助机二维码
+    /// </summary>
     public class MachineCode : Code
     {
         public int? MachineId { get; set; }
@@ -28,12 +31,23 @@ namespace WechatPayPlatform.Models
         public virtual Machine Machine { get; set; }
     }
 
+    /// <summary>
+    /// 小站二维码
+    /// </summary>
     public class StationCode : Code
     {
         public int? StationId { get; set; }
 
         [ForeignKey("StationId")]
         public virtual Station Station { get; set; }
+    }
+
+    public class ShopCode : Code
+    {
+        public int? ShopId { get; set; }
+
+        [ForeignKey("ShopId")]
+        public virtual Shop Shop { get; set; }
     }
 
     //  public class Machine

@@ -1,0 +1,79 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<h2>上门洗车 <small>预约订单</small></h2>
+
+
+<div class="container-fluid">
+    <form>
+        <div class="form-group">
+            <label for="carnumber">所在小区</label>
+            <select class="form-control" id="station"></select>
+        </div>
+        <div class="form-group">
+            <label for="carnumber">车牌号</label>
+            <input type="text" class="form-control" id="carnumber" placeholder="可输入车牌号后三位">
+        </div>
+        <div class="form-group">
+            <label for="endtime">离开时间</label>
+            <input type="time" class="form-control" id="endtime" placeholder="选择离开时间" value="">
+        </div>
+        <div class="form-group">
+            <label for="phone">联系方式</label>
+            <input type="text" class="form-control" id="phone" placeholder="您的联系方式" value="">
+        </div>
+        <div class="form-group">
+            <label for="phone">车辆描述</label>
+            <input type="text" class="form-control" id="phone" placeholder="请简单叙述车辆信息，如：颜色" value="">
+        </div>
+    </form>
+
+</div>
+
+<script type="text/javascript">
+    var stationList = null;
+    var time = null;
+
+    function getStation() {
+        var url = '~/../../api/ComeHelp/GetStationList';
+        $.get(url, function (data) {
+            station = data;
+            $.each(data, function (index, value) {
+                $('#station').append(' <option value=' + value.id + '>' + value.name + '</li>')
+            })
+        })
+    }
+    function getStartDate() {
+        var date = new Date();
+        var min = date.getMinutes() + 30;
+        var hour = date.getHours();
+        if (min >= 60) {
+            hour++;
+            min -= 60;
+        }
+        if (min < 10) {
+            min = '0' + min.toString();
+        }
+        if (hour < 10) {
+            hour = '0' + hour.toString();
+        }
+
+
+        time = hour + ':' + min;
+        // alert(time);
+        $('#endtime').val(time);
+        $('#endtime').attr('min', time);
+
+        //time = hour + '-' + min;
+        //alert(time);
+
+    }
+
+    $(document).ready(function () {
+
+        getStation();
+        getStartDate();
+        getInfo();
+    });
+
+</script>

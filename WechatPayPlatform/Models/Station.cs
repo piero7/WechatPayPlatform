@@ -38,7 +38,7 @@ namespace WechatPayPlatform.Models
 
         public string Name { get; set; }
 
-        public  string Discribe { get; set; }
+        public string Discribe { get; set; }
 
         public string Remarks { get; set; }
     }
@@ -57,12 +57,15 @@ namespace WechatPayPlatform.Models
 
         public string PhoneNumber { get; set; }
 
+        /// <summary>
+        /// 身份证
+        /// </summary>
         public string IdNumber { get; set; }
 
         public int? UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public virtual User UserInfo { get; set; }
+        public virtual WechatUser UserInfo { get; set; }
 
         public string Remarks { get; set; }
     }

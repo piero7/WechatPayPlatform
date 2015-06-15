@@ -53,7 +53,7 @@ namespace WechatPayPlatform.Controllers
             return ret;
 
         }
-        
+
 
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace WechatPayPlatform.Controllers
             try
             {
                 bill.LastStatus = "Find User";
-                var user = db.UserSet.FirstOrDefault(u => u.OpenId == openid);
+                var user = db.WechatUserSet.FirstOrDefault(u => u.OpenId == openid);
                 if (user == null)
                 {
                     bill.Remarks = "Can`t find user " + openid + "!";
@@ -189,7 +189,7 @@ namespace WechatPayPlatform.Controllers
         public double GetBalance(string openid)
         {
             var db = new ModelContext();
-            var user = db.UserSet.FirstOrDefault(u => u.OpenId == openid);
+            var user = db.WechatUserSet.FirstOrDefault(u => u.OpenId == openid);
             if (user == null)
             {
                 return 0;
@@ -214,20 +214,20 @@ namespace WechatPayPlatform.Controllers
         public bool ConfirmUse(string openid, string macid, int count)
         {
             var db = new ModelContext();
-            var user = db.UserSet.FirstOrDefault(u => u.OpenId == openid);
+            var user = db.WechatUserSet.FirstOrDefault(u => u.OpenId == openid);
             if (user == null)
             {
                 return false;
             }
             string number = DateTime.Now.Month.ToString().PadLeft(2, '0') + DateTime.Now.Day.ToString().PadLeft(2, '0') + DateTime.Now.Hour.ToString().PadLeft(2, '0') + DateTime.Now.Minute.ToString().PadLeft(2, '0') + DateTime.Now.Second.ToString().PadLeft(2, '0');
-            var bill = new Models.Bill
+            var bill = new Models.MachineBill
             {
                 Count = count,
                 CreateDate = DateTime.Now,
                 Number = number,
                 UserId = user.UserId,
             };
-            db.BillSet.Add(bill);
+            db.MachineBillSet.Add(bill);
             db.SaveChanges();
             #region debug for user 11
             //if (openid == "11")
@@ -263,7 +263,7 @@ namespace WechatPayPlatform.Controllers
         }
 
 
-        [Obsolete("该方法为测试方法，请误调用。",true)]
+        [Obsolete("该方法为测试方法，请误调用。", true)]
         [HttpGet]
         public Models.PayParms GetPayParm()
         {
@@ -308,7 +308,7 @@ namespace WechatPayPlatform.Controllers
             Helper.GetMD5(ref pp);
 
             var db = new Models.ModelContext();
-            var user = db.UserSet.FirstOrDefault(u => u.OpenId == openid);
+            var user = db.WechatUserSet.FirstOrDefault(u => u.OpenId == openid);
             if (user != null)
             {
                 user.Balance += 0.01;

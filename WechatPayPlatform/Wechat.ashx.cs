@@ -52,17 +52,17 @@ namespace WechatPayPlatform
                     if (requestXML.Event.ToLower() == "subscribe")
                     {
                         //查找user 没找到就插入
-                        User user = db.UserSet.FirstOrDefault(u => u.OpenId == requestXML.FromUserName);
+                        WechatUser user = db.WechatUserSet.FirstOrDefault(u => u.OpenId == requestXML.FromUserName);
                         if (user == null)
                         {
-                            user = new User
+                            user = new WechatUser
                             {
                                 OpenId = requestXML.FromUserName,
                                 subscribe = true,
                                 SubscribeTime = DateTime.Now,
                                 Balance = 100.00,
                             };
-                            db.UserSet.Add(user);
+                            db.WechatUserSet.Add(user);
                         }
 
                         user.SubscribeTime = DateTime.Now;
@@ -77,8 +77,8 @@ namespace WechatPayPlatform
                     //扫一扫 返回链接  带机器号、openid
                     else if (requestXML.Event.ToLower() == "scan")
                     {
-                        User user = db.UserSet.FirstOrDefault(u => u.OpenId == requestXML.FromUserName);
-                        var code = db.CodeSet.Include("Machine").FirstOrDefault(c => c.EventKey == requestXML.EventKey);
+                        WechatUser user = db.WechatUserSet.FirstOrDefault(u => u.OpenId == requestXML.FromUserName);
+                        var code = db.MachineCodeSet.Include("Machine").FirstOrDefault(c => c.EventKey == requestXML.EventKey);
                         if (code != null && code.Machine != null)
                         {
                             ret = checkXML(requestXML, string.Format("<a href = \"http://www.anjismart.com/ad/getMoney/index?openid={0}&mid={1}&mname={2}\">请点击这里支付,建议每次3元。</a>", requestXML.FromUserName, code.Machine.InnerId, code.Machine.Name));
@@ -87,8 +87,8 @@ namespace WechatPayPlatform
                     else if (requestXML.Event.ToLower() == "scancode_waitmsg")
                     {
                         requestXML.ScanResult = rootElement.SelectSingleNode("ScanCodeInfo").SelectSingleNode("ScanResult").InnerText;
-                        User user = db.UserSet.FirstOrDefault(u => u.OpenId == requestXML.FromUserName);
-                        var code = db.CodeSet.Include("Machine").FirstOrDefault(c => c.Content == requestXML.ScanResult);
+                        WechatUser user = db.WechatUserSet.FirstOrDefault(u => u.OpenId == requestXML.FromUserName);
+                        var code = db.MachineCodeSet.Include("Machine").FirstOrDefault(c => c.Content == requestXML.ScanResult);
                         if (code != null && code.Machine != null)
                         {
                             ret = checkXML(requestXML, string.Format("<a href = \"http://www.anjismart.com/ad/getMoney/index?openid={0}&mid={1}&mname={2}\">请点击这里支付,建议每次3元。</a>", requestXML.FromUserName, code.Machine.InnerId, code.Machine.Name));
