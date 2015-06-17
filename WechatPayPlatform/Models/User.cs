@@ -96,6 +96,9 @@ namespace WechatPayPlatform.Models
         public DateTime? CreateDate { get; set; }
 
         public string Describe { get; set; }
+
+        public string LocationDescribe { get; set; }
+
     }
 
 
@@ -137,6 +140,16 @@ namespace WechatPayPlatform.Models
         public string Token { get; set; }
 
         public DateTime? GetTime { get; set; }
+
+        public AccountType Type { get; set; }
+
+    }
+
+    public enum AccountType
+    {
+        Unknown = 0,
+        Service = 1,
+        Company = 2,
     }
 
 }

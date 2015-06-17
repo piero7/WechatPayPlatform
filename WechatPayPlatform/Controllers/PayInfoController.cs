@@ -321,6 +321,26 @@ namespace WechatPayPlatform.Controllers
 
     public partial class Helper
     {
+        public static string GetBillStatusName(ComeBillStatus status)
+        {
+            switch (status)
+            {
+                case ComeBillStatus.Complain:
+                    return "售后处理中";
+                case ComeBillStatus.Finish:
+                    return "完成";
+                case ComeBillStatus.ToConfirm:
+                    return "等待确认";
+                case ComeBillStatus.ToPay:
+                    return "等待支付";
+                case ComeBillStatus.Working:
+                    return "已接单";
+                case ComeBillStatus.Cancel:
+                    return "取消";
+                default:
+                    return "其他";
+            }
+        }
         public static string GetMD5(ref Models.PayParms pp)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
@@ -423,6 +443,31 @@ namespace WechatPayPlatform.Controllers
             string ret = Helper.getTimestamp().ToString() + ra.Next(9999).ToString();
             return Helper.GetMD5(ret).ToLower();
 
+        }
+
+        internal static void SendWorkMessage(int adminid, string location, CarInfo car, string desc, string time)
+        {
+            // 新订单通知\n\n位置：小区\n车牌号：沪A12345\n描述：啊啊啊啊啊啊啊啊啊\n服务时间：6/17 12:20~13:20\n<a href=//\"http://www.baiud.com\">点击确认</a>\">
+
+            string msg = "新订单通知\n\n位置:{0}\n车牌号:{1}\n描述:{2}\n服务时间:{3}\n<a href=\\\"{4}\\\">点击确认</a>";
+            msg = string.Format(msg, location, car.CarNumber, desc, time, System.Configuration.ConfigurationManager.AppSettings["baseurl"] + "/BillInfo/WorkerBillInfo?adminid=" + adminid.ToString());
+            var db = new ModelContext();
+            var admin = db.AdminSet.Find(adminid);
+
+            SendComponyMessage(admin.Account, msg);
+        }
+
+
+
+        internal static void SendComponyMessage(string account, string msg)
+        {
+            var send = "{{\"touser\": \"{0}\",\"msgtype\": \"text\",\"agentid\": \"{2}\",\"text\": {{\"content\": \"{1}\"}},\"safe\":\"0\"}}";
+
+            send = string.Format(send, account, msg, System.Configuration.ConfigurationManager.AppSettings["agentid"]);
+
+            var token = GetToken(AccountType.Company);
+            var url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + token;
+            GetResponse(send, url);
         }
     }
 }

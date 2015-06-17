@@ -1,38 +1,57 @@
 ﻿@{
     ViewBag.Title = "Index";
 }
+
 <h2>上门洗车 <small>预约订单</small></h2>
+<style>
+    label {
+        /*width:95%;
+        text-align: right;*/
+    }
 
+    .container {
+        padding-bottom: 15px;
+        padding-bottom: 10px;
+    }
+</style>
 
-<div class="container-fluid">
-    <form>
+<div class="container">
+    @using (Html.BeginForm("Index", "ComeBill", FormMethod.Post, new { role = "form", @class = "form-inline" }))
+    {
         <div class="form-group">
-            <label for="carnumber">所在小区</label>
-            <select class="form-control" id="station"></select>
+            <label for="station">所在小区</label>
+            <input class="form-control" id="station" name="station" placeholder="请输入您爱车所停放的小区名称">
         </div>
         <div class="form-group">
             <label for="carnumber">车牌号</label>
-            <input type="text" class="form-control" id="carnumber" placeholder="可输入车牌号后三位">
+            <input type="text" class="form-control" id="carnumber" name="carnumber" placeholder="可输入车牌号后三位">
         </div>
         <div class="form-group">
-            <label for="endtime">离开时间</label>
-            <input type="time" class="form-control" id="endtime" placeholder="选择离开时间" value="">
+            <label for="endtime">服务时间</label>
+            <select type="time" class="form-control" id="endtime" name="endtime"></select>
         </div>
         <div class="form-group">
             <label for="phone">联系方式</label>
-            <input type="text" class="form-control" id="phone" placeholder="您的联系方式" value="">
+            <input type="text" class="form-control" id="phone" name="phone" placeholder="您的联系方式" value="">
         </div>
         <div class="form-group">
             <label for="phone">车辆描述</label>
-            <input type="text" class="form-control" id="phone" placeholder="请简单叙述车辆信息，如：颜色" value="">
+            <input type="text" class="form-control" id="desc" name="desc" placeholder="请简单叙述车辆信息，如：颜色" value="">
         </div>
-    </form>
+        <div class="form-group">
+            <input type="hidden" id="openid" name="openid" value="@Model" />
+        </div>
+        <div style="text-align:right">
+            <button type="submit" class="btn btn-default">马上预约</button>
+        </div>
+    }
 
 </div>
 
 <script type="text/javascript">
     var stationList = null;
     var time = null;
+    var openid = '@Model';
 
     function getStation() {
         var url = '~/../../api/ComeHelp/GetStationList';
@@ -46,32 +65,60 @@
     function getStartDate() {
         var date = new Date();
         var min = date.getMinutes() + 30;
-        var hour = date.getHours();
-        if (min >= 60) {
-            hour++;
-            min -= 60;
-        }
-        if (min < 10) {
-            min = '0' + min.toString();
-        }
-        if (hour < 10) {
-            hour = '0' + hour.toString();
-        }
+        var hour = date.getHours() + 1;
+        //if (min >= 60) {
+        //    hour++;
+        //    min -= 60;
+        //}
+        //if (min < 10) {
+        //    min = '0' + min.toString();
+        //}
+        //if (hour < 10) {
+        //    hour = '0' + hour.toString();
+        //}
 
 
-        time = hour + ':' + min;
-        // alert(time);
-        $('#endtime').val(time);
-        $('#endtime').attr('min', time);
+        //time = hour + ':' + min;
+        //// alert(time);
+        //$('#endtime').val(time);
+        //$('#endtime').attr('min', time);
 
-        //time = hour + '-' + min;
-        //alert(time);
+        for (i = 0; i < 24; i++) {
+            var nhour = hour + i;
+            if (nhour > 24) {
+                nhour -= 24;
+                //  nhour = '次日' + nhour.toString();
+            }
+
+            var nnhour = nhour + 1;
+            if (nnhour > 24) {
+                nnhour -= 24;
+                //nnhour = '次日' + nnhour.toString();
+            }
+
+            $('#endtime').append(' <option >' + nhour + ':00 -' + nnhour + ':00' + '</li>')
+
+        }
+
+    }
+
+    function getInfo() {
+        var url = '~/../../api/ComeHelp/GetUserInfo?openid=' + openid;
+
+        $.get(url, null, function (data) {
+            // alert(data);
+            $('#phone').val(data.phone);
+            $('#station').val(data.sid);
+            $('#carnumber').val(data.car);
+            $('#desc').val(data.describe);
+        });
 
     }
 
     $(document).ready(function () {
 
-        getStation();
+        // getStation();
+        //alert(openid);
         getStartDate();
         getInfo();
     });

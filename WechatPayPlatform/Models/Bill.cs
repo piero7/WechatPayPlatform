@@ -7,7 +7,7 @@ using System.Web;
 
 namespace WechatPayPlatform.Models
 {
-   public class Bill
+    public class Bill
     {
         [Key]
         public int BillId { get; set; }
@@ -26,9 +26,11 @@ namespace WechatPayPlatform.Models
         public bool IsSuccess { get; set; }
 
 
-        public string innderNumber { get; set; }
+        public string innerNumber { get; set; }
 
-        public string Remaeks { get; set; }
+        public string Remarks { get; set; }
+
+        public ComeBillStatus Status { get; set; }
     }
 
 
@@ -42,6 +44,14 @@ namespace WechatPayPlatform.Models
 
         public virtual Machine Machine { get; set; }
 
+    }
+
+    public class ShopBill : Bill
+    {
+        public int? ShopId { get; set; }
+
+        [ForeignKey("ShopId")]
+        public virtual Shop Shop { get; set; }
     }
 
     /// <summary>
@@ -66,11 +76,13 @@ namespace WechatPayPlatform.Models
 
         public string Describe { get; set; }
 
-        public string Remarks { get; set; }
-
         public DateTime? FinishTime { get; set; }
 
-        public ComeBillStatus Status { get; set; }
+        public int? AdminId { get; set; }
+
+        [ForeignKey("AdminId")]
+        public virtual Administrator Admin { get; set; }
+
 
     }
 
@@ -137,5 +149,6 @@ namespace WechatPayPlatform.Models
         ToPay = 3,
         Finish = 4,
         Complain = 10,
+        Cancel = 9,
     }
 }

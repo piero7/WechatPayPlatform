@@ -161,6 +161,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\BillInfoController.cs" />
     <Compile Include="Controllers\ComeBillController.cs" />
     <Compile Include="Controllers\ComeHelpController.cs" />
     <Compile Include="Controllers\GetMoneyController.cs" />
@@ -207,6 +208,42 @@
     <Compile Include="Migrations\201506150747261_dropUserinfo.cs" />
     <Compile Include="Migrations\201506150747261_dropUserinfo.Designer.cs">
       <DependentUpon>201506150747261_dropUserinfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201506160835261_updatecarinfo.cs" />
+    <Compile Include="Migrations\201506160835261_updatecarinfo.Designer.cs">
+      <DependentUpon>201506160835261_updatecarinfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201506160859026_updatebillremarks.cs" />
+    <Compile Include="Migrations\201506160859026_updatebillremarks.Designer.cs">
+      <DependentUpon>201506160859026_updatebillremarks.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201506161030555_addShopbill.cs" />
+    <Compile Include="Migrations\201506161030555_addShopbill.Designer.cs">
+      <DependentUpon>201506161030555_addShopbill.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201506161119467_updatebill.cs" />
+    <Compile Include="Migrations\201506161119467_updatebill.Designer.cs">
+      <DependentUpon>201506161119467_updatebill.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201506161122237_updatebillStatus.cs" />
+    <Compile Include="Migrations\201506161122237_updatebillStatus.Designer.cs">
+      <DependentUpon>201506161122237_updatebillStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201506161335490_addShopname.cs" />
+    <Compile Include="Migrations\201506161335490_addShopname.Designer.cs">
+      <DependentUpon>201506161335490_addShopname.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201506161741586_addAccesstokenType.cs" />
+    <Compile Include="Migrations\201506161741586_addAccesstokenType.Designer.cs">
+      <DependentUpon>201506161741586_addAccesstokenType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201506161832185_addAdminAccount.cs" />
+    <Compile Include="Migrations\201506161832185_addAdminAccount.Designer.cs">
+      <DependentUpon>201506161832185_addAdminAccount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201506161857251_addComebillAdmin.cs" />
+    <Compile Include="Migrations\201506161857251_addComebillAdmin.Designer.cs">
+      <DependentUpon>201506161857251_addComebillAdmin.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Bill.cs" />
     <Compile Include="Models\Foreign.cs" />
@@ -381,6 +418,14 @@
     <Content Include="Views\GetMoney\Index.cshtml" />
     <Content Include="Views\Pay\Index.cshtml" />
     <Content Include="Views\ComeBill\Index.cshtml" />
+    <Content Include="Views\ComeBill\Success.cshtml" />
+    <Content Include="Views\ComeBill\Fail.cshtml" />
+    <None Include="Views\BillInfo\Index.cshtml~" />
+    <Content Include="Views\BillInfo\IndexWithOpenid.cshtml" />
+    <Content Include="Views\ComeBill\ConfirmBill.cshtml" />
+    <Content Include="Views\BillInfo\WorkerBillInfo.cshtml" />
+    <Content Include="Views\GetMoney\Pay.cshtml" />
+    <Content Include="Views\GetMoney\Jump.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -424,6 +469,33 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201506150747261_dropUserinfo.resx">
       <DependentUpon>201506150747261_dropUserinfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506160835261_updatecarinfo.resx">
+      <DependentUpon>201506160835261_updatecarinfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506160859026_updatebillremarks.resx">
+      <DependentUpon>201506160859026_updatebillremarks.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506161030555_addShopbill.resx">
+      <DependentUpon>201506161030555_addShopbill.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506161119467_updatebill.resx">
+      <DependentUpon>201506161119467_updatebill.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506161122237_updatebillStatus.resx">
+      <DependentUpon>201506161122237_updatebillStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506161335490_addShopname.resx">
+      <DependentUpon>201506161335490_addShopname.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506161741586_addAccesstokenType.resx">
+      <DependentUpon>201506161741586_addAccesstokenType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506161832185_addAdminAccount.resx">
+      <DependentUpon>201506161832185_addAdminAccount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506161857251_addComebillAdmin.resx">
+      <DependentUpon>201506161857251_addComebillAdmin.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

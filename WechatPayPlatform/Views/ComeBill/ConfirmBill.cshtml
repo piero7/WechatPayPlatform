@@ -1,0 +1,41 @@
+﻿@model WechatPayPlatform.Models.ComeBill
+
+@{
+    ViewBag.Title = "确认订单";
+}
+
+<style>
+    .buttonp {
+        text-align: right;
+    }
+</style>
+<div class="container-fluid">
+    <dl class="dl-horizontal">
+        <dt>地址</dt>
+        <dd>@Model.Address</dd>
+    </dl>
+    <dl class="dl-horizontal">
+        <dt>服务时间</dt>
+        <dd>@(Model.StartTime.Value.ToString("dd日 hh:mm -") + Model.EndTime.Value.ToString("hh:mm"))</dd>
+    </dl>
+    <dl class="dl-horizontal">
+        <dt>联系方式</dt>
+        <dd>@Model.PhoneNumber</dd>
+    </dl>
+    <dl class="dl-horizontal">
+        <dt>车牌</dt>
+        <dd>@Model.CarNumber</dd>
+    </dl>
+    <dl class="dl-horizontal">
+        <dt>描述</dt>
+        <dd>@Model.Describe</dd>
+    </dl>
+    @using (Html.BeginForm("ConfirmBill", "ComeBill", FormMethod.Post, new { role = "form", @class = "form-inline" }))
+    {
+        <input type="hidden" name="adminid" value="@ViewData["adminid"]" />
+        <input type="hidden" name="billnumber" value="@Model.innerNumber" />
+        <p class="buttonp">
+            <a href="#" class="btn btn-default" role="button" style=" font-family:'Microsoft YaHei' ;font-size:small;font-weight:400; color: #FFF;"> 确认订单</a>
+        </p>
+    }
+</div>

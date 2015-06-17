@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using WechatPayPlatform.Models;
 
 namespace WechatPayPlatform.Controllers
 {
@@ -16,90 +17,51 @@ namespace WechatPayPlatform.Controllers
             return View();
         }
 
-        //
-        // GET: /GetMoney/Details/5
-
-        public ActionResult Details(int id)
+        [HttpGet]
+        public ActionResult Pay(string billnumber)
         {
-            return View();
+            var db = new ModelContext();
+            Bill bill = null;
+
+            bill = db.ComeBillSet.Include("User").FirstOrDefault(item => item.innerNumber == billnumber);
+            if (bill.Count > bill.User.Balance)
+            {
+                return RedirectToAction("Jump", new
+                {
+                    url =
+                        (object)string.Format(
+                        "https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri={1}&response_type=code&scope=snsapi_base#wechat_redirect",
+                        System.Configuration.ConfigurationManager.AppSettings["appid"],
+                        string.Format(
+                        System.Configuration.ConfigurationManager.AppSettings["baseurl"] + "/Pay/Index")
+                        )
+                });
+            }
+
+            return View(bill);
         }
-
-        //
-        // GET: /GetMoney/Create
-
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        //
-        // POST: /GetMoney/Create
 
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Pay(FormCollection values)
         {
-            try
-            {
-                // TODO: Add insert logic here
+            var billnumber = values["billnumber"];
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            var db = new ModelContext();
+            ComeBill bill = db.ComeBillSet.Include("User").FirstOrDefault(item => item.innerNumber == billnumber);
+
+            bill.User.Balance -= bill.Count;
+            bill.Status = ComeBillStatus.Finish;
+            bill.IsSuccess = true;
+            db.SaveChanges();
+
+            return RedirectToAction("IndexWithOpenid", "BillInfo", (object)bill.User.OpenId);
         }
 
-        //
-        // GET: /GetMoney/Edit/5
-
-        public ActionResult Edit(int id)
+        [HttpGet]
+        public ActionResult Jump(string url)
         {
-            return View();
+            return View((object)url);
         }
 
-        //
-        // POST: /GetMoney/Edit/5
-
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        //
-        // GET: /GetMoney/Delete/5
-
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        //
-        // POST: /GetMoney/Delete/5
-
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

@@ -1,0 +1,196 @@
+﻿@model Dictionary<string, IEnumerable<WechatPayPlatform.Models.ComeBill>>
+@{
+    ViewBag.Title = "订单记录";
+}
+<style>
+    body {
+        background-color: inherit;
+    }
+
+    li {
+        width: 33%;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+        li > a {
+            width: 100%;
+            text-align: center;
+            font-style: normal;
+            font-family: 'Microsoft YaHei';
+            font-size: large;
+        }
+
+    .container-fluid {
+        padding: 0;
+        background-color: inherit;
+    }
+
+    .nav {
+        width: 100%;
+        padding-right: 0px;
+        margin-top: 0px;
+        padding-top: 2px;
+        background-color: rgba(228, 143, 24, 1);
+    }
+
+    .active > a {
+        font-weight: 700;
+    }
+
+    .list {
+        padding-top: 46px;
+        padding-bottom: 10px;
+        background-color: inherit;
+    }
+
+    .billstatus {
+        font-weight: 700;
+        font-family: 'Microsoft YaHei';
+        color: orange;
+    }
+
+    .buttonp {
+        text-align: right;
+    }
+
+    .btn {
+        background-color: rgba(228, 143, 24,1);
+    }
+
+    .warning {
+        margin-top: 10px;
+        font-weight: 600;
+        font-size: small;
+        font-family: 'Microsoft YaHei';
+        color: gray;
+    }
+</style>
+
+@*<h2>最近消费</h2>*@
+<div class="container-fluid">
+    <nav class="nav nav-default navbar-fixed-top ">
+        @*    <div class="container">*@
+        <ul class="nav nav-tabs ">
+            <li role="presentation" class="active" id="comem"><a href="#" onclick="chageTag(this)">待确认</a></li>
+            <li role="presentation" class="" id="shopm"><a href="#" onclick="chageTag(this)">工作中</a></li>
+            <li role="presentation" class="" id="machinem"><a href="#" onclick="chageTag(this)">已完成</a></li>
+        </ul>
+        @*</div>*@
+    </nav>
+    <div class="list">
+        @foreach (var item in Model.Keys)
+        {
+            <div id="@item">
+                @if (Model[item] == null || Model[item].Count() < 1)
+                {
+                    <p class="text-center warning"><em>改分类下尚无订单！</em></p>
+                }
+                else
+                {
+                    foreach (var sitem in Model[item])
+                    {
+                        <div class="col-sm-6 col-md-4">
+                            <div class="thumbnail">
+                                <div class="caption">
+                                    <h4 class="billstatus"> @(WechatPayPlatform.Controllers.Helper.GetBillStatusName(sitem.Status))</h4>
+                                    <p>
+                                        下单时间：@sitem.CreateDate.Value.ToString("yyyy年MM月dd日 hh:mm")
+                                    </p>
+
+                                    <p>
+                                        车牌号：@sitem.CarNumber
+                                    </p>
+                                    @if (sitem.Status == WechatPayPlatform.Models.ComeBillStatus.ToConfirm || sitem.Status == WechatPayPlatform.Models.ComeBillStatus.Working)
+                                    {
+                                        <p>
+                                            预约时间：@(sitem.StartTime.Value.ToString("MM月dd日 hh:mm") + " - " + sitem.EndTime.Value.ToString("hh:mm"))
+                                        </p>
+                                        <p>
+                                            位置：@sitem.Address
+                                        </p>
+                                        <p>
+                                            描述：@sitem.Describe
+                                        </p>
+                                    }
+                                    else if (sitem.Status == WechatPayPlatform.Models.ComeBillStatus.Finish || sitem.Status == WechatPayPlatform.Models.ComeBillStatus.Complain || sitem.Status == WechatPayPlatform.Models.ComeBillStatus.ToPay)
+                                    {
+                                        <p>
+                                            完成时间：@(sitem.FinishTime.Value.ToString("yyyy年MM月dd日 hh:mm"))
+                                        </p>
+                                    }
+                                    @if (item == "confirm")
+                                    {
+                                        using (Html.BeginForm("ConfirmBill", "ComeBill", FormMethod.Post, new { role = "form", @class = "form-inline" }))
+                                        {
+                                            <input type="hidden" name="adminid" value="@ViewData["adminid"]" />
+                                            <input type="hidden" name="billnumber" value="@sitem.innerNumber" />
+                                            <p class="buttonp">
+                                                <button class="btn btn-default" type="submit" style=" font-family:'Microsoft YaHei'; font-size:small;font-weight:400; color: #FFF;"> 确认订单</button>
+                                            </p>
+                                        }
+                                    }
+                                    else if (item == "working")
+                                    {
+                                        using (Html.BeginForm("FinishWork", "ComeBill", FormMethod.Post, new { role = "form", @class = "form-inline" }))
+                                        {
+                                            <input type="hidden" name="adminid" value="@ViewData["adminid"]" />
+                                            <input type="hidden" name="billnumber" value="@sitem.innerNumber" />
+                                            <p class="buttonp">
+                                                <button class="btn btn-default" type="submit" style=" font-family:'Microsoft YaHei' ;font-size:small;font-weight:400; color: #FFF;">已完成</button>
+                                            </p>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+</div>
+<script type="text/javascript">
+    function chageTag(o) {
+        $('.active').removeClass('active')
+        var p = $(o).parent();
+        p.addClass('active');
+        var mid = p.attr('id');
+        if (mid == 'shopm') {
+            $('#confirm').addClass('hidden');
+            $('#working').addClass('show');
+            $('#finish').addClass('hidden');
+
+            $('#confirm').removeClass('show');
+            $('#working').removeClass('hidden');
+            $('#finish').removeClass('show');
+        }
+        else if (mid == 'comem') {
+            $('#confirm').addClass('show');
+            $('#working').addClass('hidden');
+            $('#finish').addClass('hidden');
+
+            $('#confirm').removeClass('hidden');
+            $('#working').removeClass('show');
+            $('#finish').removeClass('show');
+        }
+        else if (mid == 'machinem') {
+            //alert(1);
+            $('#confirm').addClass('hidden');
+            $('#working').addClass('hidden');
+            $('#finish').addClass('show');
+
+            $('#confirm').removeClass('show');
+            $('#working').removeClass('show');
+            $('#finish').removeClass('hidden')
+        }
+    }
+    $(function () {
+        $('#confirm').addClass('show');
+        $('#working').addClass('hidden');
+        $('#finish').addClass('hidden');
+        $('#confirm').removeClass('hidden');
+        $('#working').removeClass('show');
+        $('#finish').removeClass('show');
+    });
+</script>

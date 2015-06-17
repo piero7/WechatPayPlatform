@@ -1,0 +1,182 @@
+﻿@model Dictionary<string, IEnumerable<WechatPayPlatform.Models.Bill>>
+@{
+    ViewBag.Title = "订单记录";
+}
+<style>
+    body {
+        background-color: inherit;
+    }
+
+    li {
+        width: 33%;
+    }
+
+        li > a {
+            width: 100%;
+            text-align: center;
+            font-style: normal;
+            font-family: 'Microsoft YaHei';
+            font-size: large;
+        }
+
+    .container-fluid {
+        padding: 0;
+        background-color: inherit;
+    }
+
+    .nav {
+        width: 100%;
+        padding-right: 0px;
+        margin-top: 0px;
+        padding-top: 2px;
+        background-color: rgba(228, 143, 24, 1);
+    }
+
+    .active > a {
+        font-weight: 700;
+    }
+
+    .list {
+        padding-top: 46px;
+        padding-bottom: 10px;
+        background-color: inherit;
+    }
+
+    .billstatus {
+        font-weight: 700;
+        font-family: 'Microsoft YaHei';
+        color: orange;
+    }
+
+    .buttonp {
+        text-align: right;
+    }
+
+    .btn {
+        background-color: rgba(228, 143, 24,1);
+    }
+
+    .warning {
+        margin-top: 10px;
+        font-weight: 600;
+        font-size: small;
+        font-family: 'Microsoft YaHei';
+        color: gray;
+    }
+</style>
+
+@*<h2>最近消费</h2>*@
+<div class="container-fluid">
+    <nav class="nav nav-default navbar-fixed-top ">
+        @*    <div class="container">*@
+        <ul class="nav nav-tabs ">
+            <li role="presentation" class="col-md-4 active" id="comem"><a href="#" onclick="chageTag(this)">上门</a></li>
+            <li role="presentation" class="col-md-4 " id="shopm"><a href="#" onclick="chageTag(this)">到店</a></li>
+            <li role="presentation" class="col-md-4" id="machinem"><a href="#" onclick="chageTag(this)">自助</a></li>
+        </ul>
+        @*</div>*@
+    </nav>
+    <div class="list">
+        @foreach (var item in Model.Keys)
+        {
+            <div id="@item">
+                @if (Model[item] == null || Model[item].Count() < 1)
+                {
+                    <p class="text-center warning"><em>还没有该类订单，快去试试吧！</em></p>
+                }
+                else
+                {
+                    foreach (var sitem in Model[item])
+                    {
+                        <div class="col-sm-6 col-md-4">
+                            <div class="thumbnail">
+                                <div class="caption">
+                                    <h4 class="billstatus"> @(WechatPayPlatform.Controllers.Helper.GetBillStatusName(sitem.Status))</h4>
+                                    <p>
+                                        下单时间：@sitem.CreateDate.Value.ToString("yyyy年MM月dd日 hh:mm")
+                                    </p>
+                                    @if (item == "come")
+                                    {
+                                        var obj = (WechatPayPlatform.Models.ComeBill)sitem;
+                                        <p>
+                                            车牌号：@obj.CarNumber
+                                        </p>
+                                        if (obj.Status == WechatPayPlatform.Models.ComeBillStatus.ToConfirm)
+                                        {
+                                            <p>
+                                                预约时间：@(obj.StartTime.Value.ToString("MM月dd日 hh:mm") + " - " + obj.EndTime.Value.ToString("hh:mm"))
+                                            </p>
+                                        }
+                                        else if (obj.Status == WechatPayPlatform.Models.ComeBillStatus.Finish || obj.Status == WechatPayPlatform.Models.ComeBillStatus.Complain || obj.Status == WechatPayPlatform.Models.ComeBillStatus.ToPay)
+                                        {
+
+                                            <p>
+                                                完成时间：@(obj.FinishTime.Value.ToString("yyyy年MM月dd日 hh:mm"))
+                                            </p>
+                                        }
+                                    }
+                                    <p>
+                                        消费金额：@sitem.Count 元
+                                    </p>
+                                    @if (sitem.Status == WechatPayPlatform.Models.ComeBillStatus.ToPay)
+                                    {
+                                        <p class="buttonp">
+                                            <a href="#" class="btn btn-default" role="button" style=" font-family:'Microsoft YaHei' ;font-size:small;font-weight:400; color: #FFF;" onclick="pay('@sitem.innerNumber')"> 支付</a>
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+</div>
+<script type="text/javascript">
+    function chageTag(o) {
+        $('.active').removeClass('active')
+        var p = $(o).parent();
+        p.addClass('active');
+        var mid = p.attr('id');
+        if (mid == 'shopm') {
+            $('#come').addClass('hidden');
+            $('#shop').addClass('show');
+            $('#machine').addClass('hidden');
+
+            $('#come').removeClass('show');
+            $('#shop').removeClass('hidden');
+            $('#machine').removeClass('show');
+        }
+        else if (mid == 'comem') {
+            $('#come').addClass('show');
+            $('#shop').addClass('hidden');
+            $('#machine').addClass('hidden');
+
+            $('#come').removeClass('hidden');
+            $('#shop').removeClass('show');
+            $('#machine').removeClass('show');
+        }
+        else if (mid == 'machinem') {
+            $('#come').addClass('hidden');
+            $('#shop').addClass('hidden');
+            $('#machine').addClass('show');
+
+            $('#come').removeClass('show');
+            $('#shop').removeClass('show');
+            $('#machine').removeClass('hidden')
+        }
+    }
+    function pay(billnumber) {
+        location.href = '~/../../GetMoney/Pay?billnumber=' + billnumber;
+    }
+
+    $(function () {
+        $('#come').addClass('show');
+        $('#shop').addClass('hidden');
+        $('#machine').addClass('hidden');
+        $('#come').removeClass('hidden');
+        $('#shop').removeClass('show');
+        $('#machine').removeClass('show');
+    });
+</script>

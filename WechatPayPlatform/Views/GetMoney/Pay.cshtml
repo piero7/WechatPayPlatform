@@ -1,0 +1,49 @@
+﻿@model WechatPayPlatform.Models.ComeBill
+
+@{
+    ViewBag.Title = "确认支付";
+}
+<style>
+    .billstatus {
+        font-weight: 700;
+        font-family: 'Microsoft YaHei';
+        color: orange;
+        margin-bottom: 25px;
+    }
+
+    .buttonp {
+        text-align: right;
+        padding-right: 1em;
+    }
+
+    .btn {
+        background-color: rgba(228, 143, 24,1);
+    }
+
+    .container-fluid {
+        padding-top: 8%;
+    }
+
+    .thumbnail {
+        padding-top: 5px;
+        padding-left: 15px;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class=" thumbnail">
+        <h3 class="billstatus">上门洗车</h3>
+        <p>下单时间：@Model.CreateDate </p>
+        <p>车牌号：@Model.CarNumber</p>
+        <p>位置：@Model.Address</p>
+        <p>完成时间：@Model.FinishTime.Value.ToString("yyyy年MM月dd日 hh:mm")</p>
+        <p> 金 额 ：@Model.Count  元 </p>
+        @using (Html.BeginForm("Pay", "GetMoney", FormMethod.Post, new { role = "form", @class = "form-inline" }))
+        {
+            <input type="hidden" name="billnumber" value="@Model.innerNumber" />
+            <p class="buttonp">
+                <button class="btn btn-default" type="submit" style=" font-family:'Microsoft YaHei' ;font-size:small;font-weight:400; color: #FFF;">确认支付</button>
+            </p>
+        }
+    </div>
+</div>

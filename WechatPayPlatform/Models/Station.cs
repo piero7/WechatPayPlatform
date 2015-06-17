@@ -67,6 +67,8 @@ namespace WechatPayPlatform.Models
         [ForeignKey("UserId")]
         public virtual WechatUser UserInfo { get; set; }
 
+        public string Account { get; set; }
+
         public string Remarks { get; set; }
     }
 }

@@ -10,7 +10,7 @@ using WechatPayPlatform.Models;
 
 namespace WechatPayPlatform.Controllers
 {
-     public partial class Helper
+    public partial class Helper
     {
         static public WechatUser GetUserInfo(WechatUser user)
         {
@@ -27,7 +27,7 @@ namespace WechatPayPlatform.Controllers
             //}
 
             string url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token={0}&openid={1}&lang=zh_CN";
-            var access = GetToken();
+            var access = GetToken(AccountType.Service);
             url = string.Format(url, access, user.OpenId);
             HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(url);
             req.Timeout = 2000;
@@ -57,44 +57,88 @@ namespace WechatPayPlatform.Controllers
             return user;
         }
 
-        static public string GetToken()
+        static public string GetToken(AccountType type)
         {
-            string url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}";
-            var context = new ModelContext();
-            var token = context.AccessTokenSet.First();
-
-            //现有token是否可用
-            if (DateTime.Now.Subtract(token.GetTime.Value).TotalSeconds < 7000)
+            if (type == AccountType.Service)
             {
-                return token.Token;
+                string url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}";
+                var context = new ModelContext();
+                var token = context.AccessTokenSet.First(item => item.Type == AccountType.Service);
+
+                //现有token是否可用
+                if (DateTime.Now.Subtract(token.GetTime.Value).TotalSeconds < 7000)
+                {
+                    return token.Token;
+                }
+
+
+                url = string.Format(url, System.Configuration.ConfigurationManager.AppSettings["appid"], System.Configuration.ConfigurationManager.AppSettings["appsecrect"]);
+                #region  获得新的token
+                HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(url); ;
+                req.Method = "GET";
+                req.Timeout = 2000;
+
+                HttpWebResponse res = (HttpWebResponse)req.GetResponse();
+                StreamReader sr = new StreamReader(res.GetResponseStream(), Encoding.UTF8);
+
+                var retString = sr.ReadToEnd();
+
+                JavaScriptSerializer js = new JavaScriptSerializer();
+                var retDic = js.Deserialize<Dictionary<string, string>>(retString);
+
+                string newToken = "";
+                if (retDic.ContainsKey("access_token"))
+                {
+                    newToken = retDic["access_token"];
+                }
+                #endregion
+                token.Token = newToken;
+                token.GetTime = DateTime.Now;
+                context.SaveChanges();
+
+                return newToken;
             }
 
-
-            url = string.Format(url, System.Configuration.ConfigurationManager.AppSettings["appid"], System.Configuration.ConfigurationManager.AppSettings["appsecrect"]);
-            #region  获得新的token
-            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(url); ;
-            req.Method = "GET";
-            req.Timeout = 2000;
-
-            HttpWebResponse res = (HttpWebResponse)req.GetResponse();
-            StreamReader sr = new StreamReader(res.GetResponseStream(), Encoding.UTF8);
-
-            var retString = sr.ReadToEnd();
-
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            var retDic = js.Deserialize<Dictionary<string, string>>(retString);
-
-            string newToken = "";
-            if (retDic.ContainsKey("access_token"))
+            if (type == AccountType.Company)
             {
-                newToken = retDic["access_token"];
-            }
-            #endregion
-            token.Token = newToken;
-            token.GetTime = DateTime.Now;
-            context.SaveChanges();
+                string url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={0}&corpsecret={1}";
+                var context = new ModelContext();
+                var token = context.AccessTokenSet.First(item => item.Type == AccountType.Company);
 
-            return newToken;
+                //现有token是否可用
+                if (DateTime.Now.Subtract(token.GetTime.Value).TotalSeconds < 6000)
+                {
+                    return token.Token;
+                }
+
+
+                url = string.Format(url, System.Configuration.ConfigurationManager.AppSettings["eid"], System.Configuration.ConfigurationManager.AppSettings["esecrect"]);
+                #region  获得新的token
+                HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(url); ;
+                req.Method = "GET";
+                req.Timeout = 2000;
+
+                HttpWebResponse res = (HttpWebResponse)req.GetResponse();
+                StreamReader sr = new StreamReader(res.GetResponseStream(), Encoding.UTF8);
+
+                var retString = sr.ReadToEnd();
+
+                JavaScriptSerializer js = new JavaScriptSerializer();
+                var retDic = js.Deserialize<Dictionary<string, string>>(retString);
+
+                string newToken = "";
+                if (retDic.ContainsKey("access_token"))
+                {
+                    newToken = retDic["access_token"];
+                }
+                #endregion
+                token.Token = newToken;
+                token.GetTime = DateTime.Now;
+                context.SaveChanges();
+
+                return newToken;
+            }
+            return "";
         }
         public bool WriteTxt(string str)
         {
