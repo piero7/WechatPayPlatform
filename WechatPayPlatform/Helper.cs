@@ -15,6 +15,8 @@ namespace WechatPayPlatform.Controllers
         static public WechatUser GetUserInfo(WechatUser user)
         {
             var db = new ModelContext();
+
+            var nUser = db.WechatUserSet.Find(user.UserId);
             //var user = db.UserSet.FirstOrDefault(u => u.OpenId == userOpenId);
             //if (userOpenId == null)
             //{
@@ -52,6 +54,14 @@ namespace WechatPayPlatform.Controllers
             user.Province = dic["province"];
             user.Language = dic["language"];
             user.Headimgurl = dic["headimgurl"];
+
+            nUser.NickName = dic["nickname"];
+            nUser.Sex = dic["sex"] == "1" ? Sex.男 : dic["sex"] == "2" ? Sex.女 : Sex.未知;
+            nUser.City = dic["city"];
+            nUser.Country = dic["country"];
+            nUser.Province = dic["province"];
+            nUser.Language = dic["language"];
+            nUser.Headimgurl = dic["headimgurl"];
             db.SaveChanges();
 
             return user;
@@ -138,6 +148,36 @@ namespace WechatPayPlatform.Controllers
 
                 return newToken;
             }
+            if (type == AccountType.Js)
+            {
+                var db = new ModelContext();
+                var token = db.AccessTokenSet.FirstOrDefault(item => item.Type == AccountType.Js);
+                if (DateTime.Now.Subtract(token.GetTime.Value).TotalSeconds < 6000)
+                {
+                    return token.Token;
+                }
+
+
+                string url = string.Format("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi ", Helper.GetToken(AccountType.Service));
+
+                WebClient client = new WebClient();
+                string res = client.UploadString(url, "");
+
+                JavaScriptSerializer js = new JavaScriptSerializer();
+                var retDic = js.Deserialize<Dictionary<string, string>>(res);
+                if (!retDic.Keys.Contains("ticket"))
+                {
+                    return null;
+                }
+
+                var ret = retDic["ticket"];
+                token.GetTime = DateTime.Now;
+                token.Token = ret;
+                db.SaveChanges();
+                return ret;
+
+            }
+
             return "";
         }
         public bool WriteTxt(string str)
@@ -161,5 +201,34 @@ namespace WechatPayPlatform.Controllers
             return true;
         }
 
+        public static int GetUserCount()
+        {
+            string url = "https://api.weixin.qq.com/cgi-bin/user/get?access_token={0}&next_openid=";
+            var access = GetToken(AccountType.Service);
+            url = string.Format(url, access);
+            HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(url);
+            req.Timeout = 2000;
+            req.Method = "GET";
+
+            var res = (HttpWebResponse)req.GetResponse();
+            var s = res.GetResponseStream();
+            var sr = new StreamReader(s);
+            var resString = sr.ReadToEnd();
+
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            var dic = js.Deserialize<Dictionary<string, object>>(resString);
+            if (dic.Keys.Contains("errcode"))
+            {
+                return 0;
+            }
+            else if (dic.Keys.Contains("total"))
+            {
+                return Convert.ToInt32(dic["total"]);
+            }
+            else
+            {
+                return 0;
+            }
+        }
     }
 }

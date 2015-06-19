@@ -1,0 +1,180 @@
+﻿@{
+    ViewBag.Title = "自助机说明";
+}
+<style type="text/css">
+    .jumbotron {
+        margin-top: 10%;
+        padding-top: 10px;
+        background-color:transparent;
+    }
+
+        .jumbotron h1 {
+            font-weight: 900;
+            font-family: "微软雅黑";
+            text-align: center;
+            color: orange;
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+
+        .jumbotron p {
+            font-size: 1em;
+            font-weight: 900;
+            font-family: "微软雅黑";
+        }
+
+        .jumbotron > div {
+            text-align: center;
+        }
+
+    button {
+        font-family: "微软雅黑";
+        width: 200px;
+        margin-top: 10px;
+    }
+    .jingao{
+        text-align:center;
+        color:orange;
+        font-family:"黑体";
+        font-style:italic;
+        font-size:1.5em;
+        display:none;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="jumbotron">
+        <h1>操作方法</h1>
+        <p>·点击“开始使用”扫描自助洗车机下面的二维码。</p>
+        <p>·输入洗车金额，建议单次5元左右。</p>
+        <p>·等待自助机显示屏显示消费金额后，开始洗车。</p>
+        <p>·可以按出水按钮冲洗，由车顶至周边冲洗</p>
+        <p>·按泡沫按钮喷洒清洗剂，然后用毛巾擦拭。</p>
+        <p>·最后再次按出水按钮，进行冲洗，擦干。</p>
+        <p>·建议自备两块毛巾，小块擦洗，大块摸干。</p>
+        <div>
+            <button role="button" class="btn btn-warning" onclick="scan()">开始使用</button>
+        </div>
+    </div>
+    <p class="jingao">您扫描的不是指定设备二维码<br />请重试或联系我们</p>
+
+
+
+
+
+
+
+
+
+
+    @using (Html.BeginForm(new { open = "123" }))
+    {
+        <input type="hidden" id="openid" value="@ViewBag.openid" />
+        <input type="hidden" id="mid" value="" />
+    }
+</div>
+<script type="text/javascript">
+    var openid ='@ViewBag.openid';
+    var appid = '@ViewBag.appid';
+    var timestamp = 1420774989;
+    var nonceStr = '2nDgiWM7gCxhL8v0';
+    var sign = '';
+
+    $(function(){
+        var signdata = {
+            'str': nonceStr,
+            'time': timestamp,
+        };
+        $.post('~/../../api/ComeHelp/GetJsSign?str=' + nonceStr + '&time=' + timestamp, { '': window.location.href }, function (data) {
+            //alert(data);
+            sign = data;
+            wx.config({
+                debug: @ViewBag.isJsDebug,
+                appId: appid,
+                timestamp: timestamp,
+                nonceStr: nonceStr,
+                signature: sign,
+                jsApiList: [
+                    'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ',
+                'onMenuShareWeibo',
+                'hideMenuItems',
+                'showMenuItems',
+                'hideAllNonBaseMenuItem',
+                'showAllNonBaseMenuItem',
+                'translateVoice',
+                'startRecord',
+                'stopRecord',
+                'onRecordEnd',
+                'playVoice',
+                'pauseVoice',
+                'stopVoice',
+                'uploadVoice',
+                'downloadVoice',
+                'chooseImage',
+                'previewImage',
+                'uploadImage',
+                'downloadImage',
+                'getNetworkType',
+                'openLocation',
+                'getLocation',
+                'hideOptionMenu',
+                'showOptionMenu',
+                'closeWindow',
+                'scanQRCode',
+                'chooseWXPay',
+                'openProductSpecificView',
+                'addCard',
+                'chooseCard',
+                'openCard'
+                ]
+            });
+        }, 'json');
+    })
+
+    var machineid = '';
+    function scan(){
+        wx.scanQRCode({
+            needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+            scanType: "qrCode", // 可以指定扫二维码还是一维码，默认二者都有
+            success: function (res) {
+                //alert(2);
+                var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+                //getMid(result);
+                $(".jingao").show();
+                //$('#aaa').attr('href', result);
+                // $('#aaa').html(result);
+                //alert(result);
+            }
+        });
+    }
+
+    function getMid(res){
+
+        $.ajax({
+            type:'POST',
+            url:'/../../api/PayInfo/GetMid',
+            data:{'':res},
+            success:function(data){
+                alert(data);
+            },
+            errot:function(data, status, e){
+                alert("err");
+            }
+        });
+
+        $.post('/../../api/PayInfo/GetMid',{'':'http://weixin.qq.com/q/bHU8K-LlSV0w4appqFnv'},function(data){
+            alert(data);
+            if(data ==0){
+
+            }
+            else {
+                $('#mid').val(data);
+                $('form').submit(null);
+            }
+        },'json');
+    }
+
+</script>

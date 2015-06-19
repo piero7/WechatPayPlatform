@@ -150,6 +150,7 @@ namespace WechatPayPlatform.Models
         Unknown = 0,
         Service = 1,
         Company = 2,
+        Js=3,
     }
 
 }

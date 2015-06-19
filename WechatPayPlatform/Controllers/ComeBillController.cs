@@ -50,13 +50,20 @@ namespace WechatPayPlatform.Controllers
             string desc = values["desc"];
             string openid = values["openid"];
 
-            if (string.IsNullOrEmpty(openid))
+            if (string.IsNullOrEmpty(openid) || openid.Contains("errcode"))
             {
                 return RedirectToAction("Fail");
             }
-
-            DateTime starttime = DateTime.Now.Subtract(DateTime.Now.TimeOfDay).AddHours(Convert.ToInt32(time.Replace(":00", "").Split(new char[] { '-' })[0]));
-
+            DateTime starttime = DateTime.Today;
+            if (time.Contains("明天"))
+            {
+                if (time.Split(new string[] { "明天" }, StringSplitOptions.None).Count() == 3)
+                {
+                    starttime = starttime.AddDays(1);
+                }
+               time = time.Replace("明天", "");
+            }
+            starttime = starttime.AddHours(Convert.ToInt32(time.Replace(":00", "").Split(new char[] { '-' })[0]));
             var db = new ModelContext();
 
             //用户信息
@@ -103,7 +110,7 @@ namespace WechatPayPlatform.Controllers
             db.SaveChanges();
 
             //订单号
-            string billnumner = "c" + SocketController.GetHexString(DateTime.Now.Year - 2015) + SocketController.GetHexString(DateTime.Now.Month) + DateTime.Now.ToString("ddhhmmss") + user.OpenId.Substring(openid.Length - 6, 5);
+            string billnumner = "c" + SocketController.GetHexString(DateTime.Now.Year - 2015) + SocketController.GetHexString(DateTime.Now.Month) + DateTime.Now.ToString("ddHHmmss") + user.OpenId.Substring(openid.Length - 6, 5);
 
             var adminid = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["workerid"]);
 
@@ -168,12 +175,13 @@ namespace WechatPayPlatform.Controllers
             var billnumber = values["billnumber"];
 
             var db = new ModelContext();
-            var bill = db.ComeBillSet.FirstOrDefault(item => item.innerNumber == billnumber);
+            var bill = db.ComeBillSet.Include("User").FirstOrDefault(item => item.innerNumber == billnumber);
             bill.Status = ComeBillStatus.ToPay;
             bill.FinishTime = DateTime.Now;
             db.SaveChanges();
 
             //TODO Notice user
+            Helper.SendFinishCleanMsg(bill);
 
             return RedirectToAction("WorkerBillInfo", "BillInfo", new { adminid = adminid });
         }

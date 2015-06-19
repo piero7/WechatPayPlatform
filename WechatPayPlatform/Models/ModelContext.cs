@@ -51,5 +51,7 @@ namespace WechatPayPlatform.Models
         public DbSet<ShopBill> ShopBillSet { get; set; }
         #endregion
 
+        public DbSet<DebugInfo> DebugInfoSet { get; set; }
+
     }
 }

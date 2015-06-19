@@ -245,7 +245,12 @@
     <Compile Include="Migrations\201506161857251_addComebillAdmin.Designer.cs">
       <DependentUpon>201506161857251_addComebillAdmin.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201506180739522_addDebuginfo.cs" />
+    <Compile Include="Migrations\201506180739522_addDebuginfo.Designer.cs">
+      <DependentUpon>201506180739522_addDebuginfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Bill.cs" />
+    <Compile Include="Models\DebugInfo.cs" />
     <Compile Include="Models\Foreign.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\Machine.cs" />
@@ -420,12 +425,14 @@
     <Content Include="Views\ComeBill\Index.cshtml" />
     <Content Include="Views\ComeBill\Success.cshtml" />
     <Content Include="Views\ComeBill\Fail.cshtml" />
+    <Content Include="Views\BillInfo\GetWorkInfo.cshtml" />
     <None Include="Views\BillInfo\Index.cshtml~" />
     <Content Include="Views\BillInfo\IndexWithOpenid.cshtml" />
     <Content Include="Views\ComeBill\ConfirmBill.cshtml" />
     <Content Include="Views\BillInfo\WorkerBillInfo.cshtml" />
     <Content Include="Views\GetMoney\Pay.cshtml" />
     <Content Include="Views\GetMoney\Jump.cshtml" />
+    <Content Include="Views\GetMoney\PayForMachineIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -496,6 +503,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201506161857251_addComebillAdmin.resx">
       <DependentUpon>201506161857251_addComebillAdmin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506180739522_addDebuginfo.resx">
+      <DependentUpon>201506180739522_addDebuginfo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

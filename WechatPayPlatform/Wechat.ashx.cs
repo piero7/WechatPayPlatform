@@ -58,9 +58,10 @@ namespace WechatPayPlatform
                             user = new WechatUser
                             {
                                 OpenId = requestXML.FromUserName,
-                                subscribe = true,
                                 SubscribeTime = DateTime.Now,
-                                Balance = 100.00,
+                                Balance = 0,
+                                subscribe = true,
+                                Sex = 0
                             };
                             db.WechatUserSet.Add(user);
                         }

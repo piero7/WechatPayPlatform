@@ -40,7 +40,14 @@ namespace WechatPayPlatform.Controllers
                         bill.IsSuccess = true;
                         if (bill.User != null)
                         {
-                            bill.User.Balance += bill.Count;
+                            if (bill.Count == 1)
+                            {
+                                bill.User.Balance += 23;
+                            }
+                            else
+                            {
+                                bill.User.Balance += ((bill.Count / 100.00) + ((Convert.ToInt32(bill.Count.Value) / 10000) * 20));
+                            }
                         }
                     }
                 }
@@ -113,6 +120,10 @@ namespace WechatPayPlatform.Controllers
                 bill.LastStatus = "Get Prepayid ";
                 string resStr = Helper.GetResponse(Helper.GetReqStr(prePayDic), "https://api.mch.weixin.qq.com/pay/unifiedorder");
 
+                //Debug
+                // db.DebugInfoSet.Add(new DebugInfo(resStr));
+
+
                 //解析返回数据，获得Prepayid
                 int startIndex = resStr.IndexOf("<prepay_id><![CDATA[") + "<prepay_id><![CDATA[".Length;
                 int endIndex = resStr.IndexOf("]]></prepay_id>");
@@ -121,7 +132,7 @@ namespace WechatPayPlatform.Controllers
                 //封装支付参数包
                 bill.LastStatus = "Create Pay Params Package";
                 pp = new PayParms();
-                pp.timeStamp = Helper.getTimestamp();
+                pp.timestamp = Helper.getTimestamp();
                 pp.nonceStr = nonceStr;
                 pp.SetPackage(prepayId);
 
@@ -152,8 +163,8 @@ namespace WechatPayPlatform.Controllers
         [HttpGet]
         public string GetOpenidByCode(string code)
         {
-            var a = new Helper();
-            a.WriteTxt(code);
+            //  var a = new Helper();
+            // a.WriteTxt(code);
             string openid = "err";
 
             string apps = System.Configuration.ConfigurationManager.AppSettings["appsecrect"];
@@ -162,7 +173,7 @@ namespace WechatPayPlatform.Controllers
 
             string resStr = Helper.GetResponse("", url);
 
-            a.WriteTxt(resStr);
+            //a.WriteTxt(resStr);
 
             //  resStr = string.Format("{{\"res\":{0} }}", resStr);
             var resXml = JsonConvert.DeserializeXNode(resStr, "res");
@@ -189,6 +200,7 @@ namespace WechatPayPlatform.Controllers
         public double GetBalance(string openid)
         {
             var db = new ModelContext();
+            db.DebugInfoSet.Add(new DebugInfo(openid));
             var user = db.WechatUserSet.FirstOrDefault(u => u.OpenId == openid);
             if (user == null)
             {
@@ -301,7 +313,7 @@ namespace WechatPayPlatform.Controllers
 
             Models.PayParms pp = new Models.PayParms()
             {
-                timeStamp = Helper.getTimestamp()
+                timestamp = Helper.getTimestamp()
             };
             pp.SetPackage(prepayId);
 
@@ -317,6 +329,79 @@ namespace WechatPayPlatform.Controllers
             return pp;
         }
 
+
+        [HttpPost]
+        public int GetMid([FromBody]string res)
+        {
+            var db = new ModelContext();
+            var m = db.MachineCodeSet.Include("Machine").FirstOrDefault(item => item.Content == res);
+            if (m == null || m.Machine == null)
+            {
+                return 0;
+            }
+            return m.MachineId.Value;
+        }
+
+        [HttpGet]
+        public object HasSales(string openid)
+        {
+            var db = new ModelContext();
+            var user = db.WechatUserSet.FirstOrDefault(item => item.OpenId == openid);
+            if (user == null)
+            {
+                if (string.IsNullOrEmpty(openid) || openid.Contains("errcode"))
+                {
+                    return null;
+                }
+                else
+                {
+                    user = new WechatUser
+                    {
+                        OpenId = openid,
+                        SubscribeTime = DateTime.Now,
+                        Balance = 0,
+                        subscribe = true,
+                        Sex = 0
+                    };
+                    db.WechatUserSet.Add(user);
+                    db.SaveChanges();
+                    Helper.GetUserInfo(user);
+                }
+            }
+            if (!db.RechargeBillSet.Any(item => (item.UserId == user.UserId) && (item.IsSuccess ?? false)))
+            {
+                return new { value = "1", text = "0.01" };
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        [HttpGet]
+        public int RefreshAllUserInfo(string pwd)
+        {
+            if (pwd != "anjismart")
+            {
+                return 0;
+            }
+            int ret = 0;
+            var db = new ModelContext();
+            foreach (var item in db.WechatUserSet)
+            {
+                if (item.OpenId.Length < 10 || item.OpenId.Contains("{"))
+                {
+                    continue;
+                }
+                else
+                {
+                    Helper.GetUserInfo(item);
+                    ret++;
+                }
+            }
+            return ret;
+        }
+
     }
 
     public partial class Helper
@@ -328,13 +413,13 @@ namespace WechatPayPlatform.Controllers
                 case ComeBillStatus.Complain:
                     return "售后处理中";
                 case ComeBillStatus.Finish:
-                    return "完成";
+                    return "订单完成";
                 case ComeBillStatus.ToConfirm:
-                    return "等待确认";
+                    return "等待接单";
                 case ComeBillStatus.ToPay:
-                    return "等待支付";
+                    return "已清洗待支付";
                 case ComeBillStatus.Working:
-                    return "已接单";
+                    return "已接单待上门";
                 case ComeBillStatus.Cancel:
                     return "取消";
                 default:
@@ -346,7 +431,7 @@ namespace WechatPayPlatform.Controllers
             Dictionary<string, string> dic = new Dictionary<string, string>();
 
             dic.Add("appId", pp.appId);
-            dic.Add("timeStamp", pp.timeStamp);
+            dic.Add("timeStamp", pp.timestamp);
             dic.Add("package", pp.package);
             dic.Add("signType", pp.signType);
             dic.Add("nonceStr", pp.nonceStr);
@@ -365,6 +450,7 @@ namespace WechatPayPlatform.Controllers
                 enStr += item + "=" + dic[item] + "&";
             }
             enStr += "key=" + System.Configuration.ConfigurationManager.AppSettings["paykey"];
+            //  enStr.Replace("timestamp", "timeStamp");
             return GetMD5(enStr);
 
         }
@@ -454,13 +540,14 @@ namespace WechatPayPlatform.Controllers
             var db = new ModelContext();
             var admin = db.AdminSet.Find(adminid);
 
-            SendComponyMessage(admin.Account, msg);
+            SendComponyMessage("@all", msg);
         }
 
 
 
         internal static void SendComponyMessage(string account, string msg)
         {
+            //   account = "chenzijun|q@51xc.me";
             var send = "{{\"touser\": \"{0}\",\"msgtype\": \"text\",\"agentid\": \"{2}\",\"text\": {{\"content\": \"{1}\"}},\"safe\":\"0\"}}";
 
             send = string.Format(send, account, msg, System.Configuration.ConfigurationManager.AppSettings["agentid"]);
@@ -469,5 +556,64 @@ namespace WechatPayPlatform.Controllers
             var url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + token;
             GetResponse(send, url);
         }
+
+        public static string GetJsApiSignature(string url, string noncestr, string timestamp)
+        {
+            var tic = Helper.GetToken(AccountType.Js);
+            var cpyString = string.Format("jsapi_ticket={0}&noncestr={1}&timestamp={2}&url={3}", tic, noncestr, timestamp, url);
+            var ret = GetSha1Str(cpyString);
+            return ret;
+        }
+
+        public static string GetJsApiTicket()
+        {
+
+            var token = GetToken(AccountType.Service);
+            string url = string.Format("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi ", token);
+
+            WebClient client = new WebClient();
+            string res = client.UploadString(url, "");
+
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            var retDic = js.Deserialize<Dictionary<string, string>>(res);
+            if (!retDic.Keys.Contains("ticket"))
+            {
+                return null;
+            }
+
+            var ret = retDic["ticket"];
+
+            return ret;
+        }
+        public static string GetSha1Str(string str)
+        {
+            byte[] strRes = Encoding.UTF8.GetBytes(str);
+            HashAlgorithm iSha = new SHA1CryptoServiceProvider();
+            strRes = iSha.ComputeHash(strRes);
+            var enText = new StringBuilder();
+            foreach (byte iByte in strRes)
+            {
+                enText.AppendFormat("{0:x2}", iByte);
+            }
+            return enText.ToString();
+        }
+
+        public static void SendFinishCleanMsg(ComeBill bill)
+        {
+            string msgModle = "{{\"touser\":\"{0}\",\"template_id\":\"Tlkdx1KtnMzGql-cQcO_AakMBxlXX3Ry_DqeovadPjA\",\"url\":\"{1}\",\"topcolor\":\"#FF0000\",\"data\":{{\"first\":{{\"value\":\"{2}\",\"color\":\"#173177\"}},\"ordertape\":{{\"value\":\"{3}\",\"color\":\"#173177\"}},\"ordeID\":{{\"value\":\"{4}\",\"color\":\"#173177\"}},\"remark\":{{\"value\":\"{5}！\",\"color\":\"#173177\"}}}}}}";
+            string jurl = System.Configuration.ConfigurationManager.AppSettings["baseurl"] + "/GetMoney/Pay?billnumber=" + bill.innerNumber;
+            msgModle = string.Format(msgModle,
+                bill.User.OpenId,
+                jurl,
+                "您的车辆已经清洗完毕，请点击该消息或者进入菜单“钱包”－“最近订单”确认支付，谢谢！",
+                bill.CreateDate.Value.ToString("MM月dd日 HH:mm"), bill.innerNumber,
+                "感谢您的使用，有任何问题可以直接在微信内输入，或者拨打贵宾专线：4001008262");
+
+            string url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + Helper.GetToken(AccountType.Service);
+            Helper.GetResponse(msgModle, url);
+        }
+
+
+
     }
 }

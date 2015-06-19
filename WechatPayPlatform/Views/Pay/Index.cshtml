@@ -2,58 +2,238 @@
     ViewBag.Title = "充值";
 }
 
-<h2 style="text-align:center;color:#ff6a00">自助充值系统</h2>
-<div style="margin-left:2em ;">
-    <p>请选择充值金额：</p>
+<style>
+    .container-fluid {
+        margin-left: 12%;
+    }
 
-    <p style="text-align:left">
-        <input type="number" value="1" id="count" style="margin-left:30px;width:50%;" />
-    </p>
-    <p style="text-align:left">
-        <input type="button" id="confirm" value="充值" style="margin-right:30px;padding:8px 25px  8px 25px; margin-left:5em ;background-color:#ff6a00;color:#fff;border:none" " />
+    .count {
+        /*margin-left: 30px;*/
+        width: 68%;
+        font-size: large;
+        padding-left: 5%;
+        margin-right: 10px;
+        padding: 5px;
+    }
+
+    .attention {
+        /*padding-left: 12%;*/
+    }
+
+    .title {
+        text-align: center;
+        color: orange;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .sub {
+        /*margin-right: 30px;*/
+        /*padding: 8px 25px 8px 25px;
+        margin-right: 40%;
+        background-color: #ff6a00;
+        color: #fff;
+        border: none;*/
+    }
+
+    .tishi {
+        margin-top: 3em;
+        margin-left: -15%;
+        text-align: left;
+    }
+
+        .tishi div {
+            font-size: 1.2em;
+        }
+
+        .tishi p{
+            margin-bottom:16px;
+        }
+
+    .alert {
+        font-family: "Microsoft YaHei";
+    }
+
+    ul{
+        padding-left:8%;
+    }
+</style>
+<h2 class="title" style="">微信钱包</h2>
+<div class="container-fluid">
+    <p style="padding-right:30%">
+        <span id="wstr" style="overflow-wrap:break-word;color:orange;font-style:italic; font-weight:400">
+
+        </span>
     </p>
     <p>
-        <span id="tit"></span>
+        <label>
+            当前余额：
+        </label>
+        <label id="balance">获取中...</label>
     </p>
+    <label class="attention">
+        请选择充值金额：
+    </label>
+    <p style="text-align:left">
+        <select class="count" value="1" id="count">
+            <option value="100">1</option>
+            <option value="300">3</option>
+            <option value="500">5</option>
+            <option value="10000">100</option>
+            <option value="50000">500</option>
+            <option value="100000">1000</option>
+        </select>元
+    </p>
+    <p style="text-align:center;margin-left:-15%;">
+        <input type="button" class="sub" id="confirm" value="充值" style=" padding: 8px 25px 8px 25px;   background-color: #ff6a00; color: #fff; border: none;" />
+    </p>
+    <p style="padding-right:30%">
+        <span id="tit" style="overflow-wrap:break-word;color:orange;font-style:italic;">
+
+        </span>
+    </p>
+    @using (Html.BeginForm(""))
+    {
+        <input type="hidden" value="@ViewBag.from" name="from" />
+        <input type="hidden" value="@ViewBag.param" name="param" id="param" />
+    }
+    <div class="tishi">
+        <div class="alert alert-warning">
+            <strong>首次充值</strong>
+            <p>
+                0.01元，立享23元上门洗车体验。
+            </p>
+            <p>
+                <strong>限时惊喜！</strong><br />单次充100送20优惠无上限。
+            </p>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
     var openid = '';
     var non = '';
+    var code = getUrlVar('code');
+
+    var from = '@ViewBag.from';
+    var wstr = '@ViewBag.wstr'
+    var param = '@ViewBag.param'
+
+    function getBalance() {
+        $.get('~/../../api/PayInfo/GetBalance?openid=' + openid, null, function (data) {
+            $('#balance').html(data + ' 元');
+        })
+    };
 
     $(document).ready(function () {
-        var code = getUrlVar('code');
-        //alert(code);
+        var appId = '@ViewBag.appid';
+        var timestamp = 1420774989;
+        var nonceStr = '2nDgiWM7gCxhL8v0';
+        var sign = '';
+
+        if (wstr != null && wstr.length > 0) {
+            $('#wstr').html(wstr);
+        }
+
+        //alert($('#param').val());
+        var signdata = {
+            'str': nonceStr,
+            'time': timestamp,
+        };
+        $.post('~/../../api/ComeHelp/GetJsSign?str=' + nonceStr + '&time=' + timestamp, { '': window.location.href }, function (data) {
+            sign = data;
+            wx.config({
+                debug: false,
+                appId: appId,
+                timestamp: timestamp,
+                nonceStr: nonceStr,
+                signature: sign,
+                jsApiList: [
+                    'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ',
+                'onMenuShareWeibo',
+                'hideMenuItems',
+                'showMenuItems',
+                'hideAllNonBaseMenuItem',
+                'showAllNonBaseMenuItem',
+                'translateVoice',
+                'startRecord',
+                'stopRecord',
+                'onRecordEnd',
+                'playVoice',
+                'pauseVoice',
+                'stopVoice',
+                'uploadVoice',
+                'downloadVoice',
+                'chooseImage',
+                'previewImage',
+                'uploadImage',
+                'downloadImage',
+                'getNetworkType',
+                'openLocation',
+                'getLocation',
+                'hideOptionMenu',
+                'showOptionMenu',
+                'closeWindow',
+                'scanQRCode',
+                'chooseWXPay',
+                'openProductSpecificView',
+                'addCard',
+                'chooseCard',
+                'openCard'
+                ]
+            });
+        }, 'json');
+
+
+        //获取openid
         $.get('~/../../api/PayInfo/GetOpenidByCode?code=' + code, '', function (data) {
             openid = data;
-            //alert(openid);
+            getBalance();
+
+            $.get("~/../../api/PayInfo/HasSales?openid=" + openid, null, function (data) {
+                if (data != null) {
+                    $('#count').prepend('<option value="' + data.value + '" selected=true>' + data.text + '</option>');
+                }
+            });
         });
 
+
+
+
+
+
         $('#confirm').click(function () {
-            $('#confirm').attr('disabled', 'disabled');
-            $('#confirm').val("支付中...");
+            $('#confirm').addClass('hidden');
+            //$('#confirm').val("支付中...");
+            $('#tit').html("正在支付，请稍后.....");
             $.get('~/../../api/PayInfo/GetPayParams?openid=' + openid + '&count=' + $('#count').val(), null, function (data) {
                 //alert(data);
                 pp = data;
                 non = pp.nonceStr;
-                // alert(non);
-                WeixinJSBridge.invoke('getBrandWCPayRequest', pp, function (res) {
-                    //alert(res.err_msg);
+                pp.success = function (res) {
+                    //alert(res);
                     var issuccess = false;
-                    if (res.err_msg == "get_brand_wcpay_request:ok") {
-                        // alert('ok!!');
-                        $('#tit').html("充值成功");
+                    // alert(res.errMsg == "chooseWXPay:ok");
+                    if (res != null && res.errMsg != null && res.errMsg == "chooseWXPay:ok") {
+                        $('#tit').html("充值成功！");
                         issuccess = true;
                     } else {
-                        $('#tit').html("充值失败");
+                        $('#tit').html("抱歉！充值失败,请关闭页面重试或将信息反馈给我们。");
                     }
                     $.get('~/../../api/PayInfo/FinishPay?non=' + non + '&issuccess=' + issuccess, '', function (data) {
                         if (data) {
-                            alert('充值完成，请关闭网页。')
+                            // alert(data);
+                            $('form').submit();
                         }
+                        getBalance();
                     })
-                });
+                }
+                wx.chooseWXPay(pp);
             });
         });
     });
+
 </script>

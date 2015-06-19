@@ -36,7 +36,7 @@
         <p>下单时间：@Model.CreateDate </p>
         <p>车牌号：@Model.CarNumber</p>
         <p>位置：@Model.Address</p>
-        <p>完成时间：@Model.FinishTime.Value.ToString("yyyy年MM月dd日 hh:mm")</p>
+        <p>完成时间：@Model.FinishTime.Value.ToString("yyyy年MM月dd日 HH:mm")</p>
         <p> 金 额 ：@Model.Count  元 </p>
         @using (Html.BeginForm("Pay", "GetMoney", FormMethod.Post, new { role = "form", @class = "form-inline" }))
         {

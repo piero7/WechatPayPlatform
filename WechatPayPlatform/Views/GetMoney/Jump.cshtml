@@ -1,5 +1,4 @@
-﻿@model String
-@{
+﻿@{
     Layout = null;
 }
 
@@ -10,12 +9,14 @@
     <meta name="viewport" content="width=device-width" />
     <title>Jump</title>
     <script type="text/javascript">
-        window.document.location.href = '@Model';
+        var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +@Model.appid +"+&redirect_uri=" +@Model.url +"&response_type=code&scope=snsapi_base#wechat_redirect";
+        $('#123').html('<p>' + url + '</p>')
+        window.document.location.href = url;
     </script>
 </head>
 <body>
-    <div>
-        @*@Model*@
+    <div id="123">
+
     </div>
 </body>
 </html>

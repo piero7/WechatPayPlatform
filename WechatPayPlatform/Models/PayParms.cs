@@ -9,7 +9,7 @@ namespace WechatPayPlatform.Models
     {
         public string appId = System.Configuration.ConfigurationManager.AppSettings["appid"];
 
-        public string timeStamp { get; set; }
+        public string timestamp { get; set; }
 
         public string nonceStr { get; set; }
 
