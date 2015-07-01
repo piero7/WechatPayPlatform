@@ -46,7 +46,7 @@ namespace WechatPayPlatform.Controllers
                             }
                             else
                             {
-                                bill.User.Balance += ((bill.Count / 100.00) + ((Convert.ToInt32(bill.Count.Value) / 10000) * 20));
+                                bill.User.Balance += ((bill.Count / 100.00) + ((Convert.ToInt32(bill.Count.Value) / 10000) * 10));
                             }
                         }
                     }

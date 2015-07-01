@@ -61,7 +61,7 @@ namespace WechatPayPlatform.Controllers
                 {
                     starttime = starttime.AddDays(1);
                 }
-               time = time.Replace("明天", "");
+                time = time.Replace("明天", "");
             }
             starttime = starttime.AddHours(Convert.ToInt32(time.Replace(":00", "").Split(new char[] { '-' })[0]));
             var db = new ModelContext();
@@ -183,6 +183,22 @@ namespace WechatPayPlatform.Controllers
             //TODO Notice user
             Helper.SendFinishCleanMsg(bill);
 
+            return RedirectToAction("WorkerBillInfo", "BillInfo", new { adminid = adminid });
+        }
+
+        [HttpPost]
+        public ActionResult CancelBill(FormCollection valuse)
+        {
+            var adminid = Convert.ToInt32(valuse["adminid"]);
+            var billnumber = valuse["billnumber"];
+
+
+            var db = new ModelContext();
+            var bill = db.ComeBillSet.FirstOrDefault(item => item.innerNumber == billnumber);
+            bill.Status = ComeBillStatus.Cancel;
+            bill.FinishTime = DateTime.Now;
+
+            db.SaveChanges();
             return RedirectToAction("WorkerBillInfo", "BillInfo", new { adminid = adminid });
         }
 
