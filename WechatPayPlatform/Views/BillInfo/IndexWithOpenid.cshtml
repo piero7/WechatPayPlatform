@@ -104,7 +104,7 @@
                                         <p>
                                             车牌号：@obj.CarNumber
                                         </p>
-                                        if (obj.Status == WechatPayPlatform.Models.ComeBillStatus.ToConfirm || obj.Status == WechatPayPlatform.Models.ComeBillStatus.Working)
+                                                if (obj.Status == WechatPayPlatform.Models.ComeBillStatus.ToConfirm || obj.Status == WechatPayPlatform.Models.ComeBillStatus.Working)
                                         {
                                             <p>
                                                 预约时间：@(obj.StartTime.Value.ToString("MM月dd日 HH:mm") + " - " + obj.EndTime.Value.ToString("HH:mm"))
