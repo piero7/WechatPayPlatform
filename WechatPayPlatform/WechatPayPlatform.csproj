@@ -426,6 +426,7 @@
     <Content Include="Views\ComeBill\Success.cshtml" />
     <Content Include="Views\ComeBill\Fail.cshtml" />
     <Content Include="Views\BillInfo\GetWorkInfo.cshtml" />
+    <Content Include="Views\BillInfo\GetWorkInfoPart.cshtml" />
     <None Include="Views\BillInfo\Index.cshtml~" />
     <Content Include="Views\BillInfo\IndexWithOpenid.cshtml" />
     <Content Include="Views\ComeBill\ConfirmBill.cshtml" />

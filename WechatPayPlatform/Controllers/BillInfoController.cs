@@ -116,15 +116,83 @@ namespace WechatPayPlatform.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetWorkInfo(int? adminid)
+        public ActionResult GetWorkInfo(int? adminid, int? mou, int? year)
         {
             var db = new ModelContext();
-            ViewBag.usercount = db.ComeBillSet.Where(item => item.Status == ComeBillStatus.Finish).Select(item => item.UserId).Distinct().Count();
+            //int year = 2015;
+            // int mou = 7;
+            ViewBag.year = year;
+            ViewBag.mou = mou;
+
+            int count = 0;
+            //var startTime = new DateTime(year , mou,1);
+            //var endTime  = new DateTime();
+            //if(mou == 12){
+            //    endTime = new DateTime(year+1,1,1);
+            //}
+            //else{
+            //    endTime = new DateTime(year,mou +1,1);
+            //}
+
+            //获取当月新增有限用户数 
+            //TODO: 逻辑待验证
+            var userIdList = db.ComeBillSet.Where(item => item.Status == ComeBillStatus.Finish).Select(item => item.UserId).Distinct().ToList();
+            foreach (var userId in userIdList)
+            {
+                var firbill = db.ComeBillSet.Where(item => item.UserId == userId).OrderBy(item => item.CreateDate).FirstOrDefault();
+                if (firbill.CreateDate.Value.Month == mou && firbill.CreateDate.Value.Year == year)
+                {
+                    count++;
+                }
+            }
+            //ViewBag.usercount = db.ComeBillSet.Where(item => item.Status == ComeBillStatus.Finish).Select(item => item.UserId).Distinct().Count();
+            ViewBag.usercount = count;
             // = Helper.GetUserCount() - 10;
             ViewBag.tocom = db.ComeBillSet.Count(item => item.Status == ComeBillStatus.ToConfirm);
             ViewBag.todo = db.ComeBillSet.Count(item => item.Status == ComeBillStatus.Working);
             ViewBag.topay = db.ComeBillSet.Count(item => item.Status == ComeBillStatus.ToPay);
             ViewBag.finish = db.ComeBillSet.Count(item => item.Status == ComeBillStatus.Finish);
+            ViewBag.cancel = db.ComeBillSet.Count(item => item.Status == ComeBillStatus.Cancel);
+
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult GetWorkInfoPart(int? adminid, int? year, int? mou)
+        {
+            var db = new ModelContext();
+            //int year = 2015;
+            // int mou = 7;
+            ViewBag.year = year;
+            ViewBag.mou = mou;
+
+            int count = 0;
+            //var startTime = new DateTime(year , mou,1);
+            //var endTime  = new DateTime();
+            //if(mou == 12){
+            //    endTime = new DateTime(year+1,1,1);
+            //}
+            //else{
+            //    endTime = new DateTime(year,mou +1,1);
+            //}
+
+            //获取当月新增有限用户数 
+            //TODO: 逻辑待验证
+            var userIdList = db.ComeBillSet.Where(item => item.Status == ComeBillStatus.Finish).Select(item => item.UserId).Distinct().ToList();
+            foreach (var userId in userIdList)
+            {
+                var firbill = db.ComeBillSet.Where(item => item.UserId == userId).OrderBy(item => item.CreateDate).FirstOrDefault();
+                if (firbill.CreateDate.Value.Month == mou && firbill.CreateDate.Value.Year == year)
+                {
+                    count++;
+                }
+            }
+            ViewBag.usercount = count;
+            ViewBag.tocom = db.ComeBillSet.Count(item => item.Status == ComeBillStatus.ToConfirm);
+            ViewBag.todo = db.ComeBillSet.Count(item => item.Status == ComeBillStatus.Working);
+            ViewBag.topay = db.ComeBillSet.Count(item => item.Status == ComeBillStatus.ToPay);
+            ViewBag.finish = db.ComeBillSet.Count(item => item.Status == ComeBillStatus.Finish);
+            ViewBag.cancel = db.ComeBillSet.Count(item => item.Status == ComeBillStatus.Cancel);
 
             return View();
         }
