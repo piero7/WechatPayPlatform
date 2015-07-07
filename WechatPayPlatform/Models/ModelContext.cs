@@ -22,11 +22,17 @@ namespace WechatPayPlatform.Models
 
         public DbSet<AccessToken> AccessTokenSet { get; set; }
 
+        #region Bills
         public DbSet<MachineBill> MachineBillSet { get; set; }
+
+
+        public DbSet<ReachargeBill> RechargeBillSet { get; set; }
 
         public DbSet<ComeBill> ComeBillSet { get; set; }
 
-        public DbSet<ReachargeBill> RechargeBillSet { get; set; }
+        public DbSet<ComeBillType> ComeBillType { get; set; }
+
+        #endregion
 
         public DbSet<Machine> MachineSet { get; set; }
 
@@ -52,6 +58,8 @@ namespace WechatPayPlatform.Models
         #endregion
 
         public DbSet<DebugInfo> DebugInfoSet { get; set; }
+
+
 
     }
 }

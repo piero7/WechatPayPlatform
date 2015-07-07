@@ -78,6 +78,7 @@ namespace WechatPayPlatform.Controllers
             bill.User.Balance -= bill.Count;
             bill.Status = ComeBillStatus.Finish;
             bill.IsSuccess = true;
+            bill.PayDate = DateTime.Now;
             db.SaveChanges();
 
             return RedirectToAction("IndexWithOpenid", "BillInfo", new { openid = bill.User.OpenId });

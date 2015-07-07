@@ -31,6 +31,9 @@ namespace WechatPayPlatform.Models
         public string Remarks { get; set; }
 
         public ComeBillStatus Status { get; set; }
+
+        public DateTime? PayDate { get; set; }
+
     }
 
 
@@ -82,6 +85,30 @@ namespace WechatPayPlatform.Models
 
         [ForeignKey("AdminId")]
         public virtual Administrator Admin { get; set; }
+
+        public int? ComeBillTypeId { get; set; }
+
+        [ForeignKey("ComeBillTypeId")]
+        public ComeBillType BillType { get; set; }
+
+
+
+    }
+
+    public class ComeBillType
+    {
+        [Key]
+        public int ComeBillTypeId { get; set; }
+
+        public string Name { get; set; }
+
+        public double? Price { get; set; }
+
+        public string Describe { get; set; }
+
+        public string ExplainUrl { get; set; }
+
+        public string Remarks { get; set; }
 
 
     }

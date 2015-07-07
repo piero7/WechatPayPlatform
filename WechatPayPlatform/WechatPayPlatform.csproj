@@ -249,6 +249,10 @@
     <Compile Include="Migrations\201506180739522_addDebuginfo.Designer.cs">
       <DependentUpon>201506180739522_addDebuginfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201507070146159_addComeBillType.cs" />
+    <Compile Include="Migrations\201507070146159_addComeBillType.Designer.cs">
+      <DependentUpon>201507070146159_addComeBillType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Bill.cs" />
     <Compile Include="Models\DebugInfo.cs" />
     <Compile Include="Models\Foreign.cs" />
@@ -507,6 +511,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201506180739522_addDebuginfo.resx">
       <DependentUpon>201506180739522_addDebuginfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507070146159_addComeBillType.resx">
+      <DependentUpon>201507070146159_addComeBillType.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

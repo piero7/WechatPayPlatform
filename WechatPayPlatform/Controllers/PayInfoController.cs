@@ -42,7 +42,7 @@ namespace WechatPayPlatform.Controllers
                         {
                             if (bill.Count == 1)
                             {
-                                bill.User.Balance += 23;
+                               // bill.User.Balance += 23;
                             }
                             else
                             {

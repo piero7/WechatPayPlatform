@@ -114,6 +114,10 @@ namespace WechatPayPlatform.Controllers
 
             var adminid = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["workerid"]);
 
+            //get the bill type
+            bool isFirst = db.ComeBillSet.Where(item => item.UserId == user.UserId).Any(item => item.Status != ComeBillStatus.Cancel);
+
+
             //noctice worker
             Helper.SendWorkMessage(adminid, location, car, desc, time);
 
@@ -130,7 +134,8 @@ namespace WechatPayPlatform.Controllers
                             innerNumber = billnumner,
                             UserId = user.UserId,
                             AdminId = adminid,
-                            Count = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["billPrice"])
+                            // Count = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["billPrice"])
+                            ComeBillTypeId = isFirst ? 1 : 2,
                         };
             //if (openid == "testtest")
             //{
@@ -138,6 +143,8 @@ namespace WechatPayPlatform.Controllers
             //}
 
             db.ComeBillSet.Add(bill);
+            db.SaveChanges();
+            bill.Count = bill.BillType.Price ?? 0;
             db.SaveChanges();
 
             return RedirectToAction("IndexWithOpenid", "BillInfo", new { openid = openid });

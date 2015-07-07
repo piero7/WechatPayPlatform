@@ -2,59 +2,99 @@
     ViewBag.Title = "站长助手";
 }
 
+<style>
+    h2 {
+        text-align: center;
+    }
+
+    .con {
+        margin-top: 4%;
+    }
+
+    .sle {
+        padding-right: 50px;
+    }
+</style>
 <div class="container">
+    <div class="sel">
+        <h2>工作量统计</h2>
+        <p style="text-align:right">
+            <select id="year">
+                <option value="2015">2015</option>
+                <option value="2014">2014</option>
+            </select>
+            <label>年&nbsp;&nbsp;&nbsp;</label>
+            <select id="mou"></select>
+            <label>月</label>
+        </p>
+    </div>
+    <div id="con" class="con">
 
-    <h2>工作量统计</h2>
-    <p>
+        @*</div>
+            <table class="table table-bordered" style="text-align:center; " cellspacing="0" cellpadding="0" width="270" align="center">
+                <thead>
+                    <tr>
+                        <td colspan="2">分类</td>
+                        <td colspan="2">数量</td>
 
-        <select>
-            <option value="2015">2015</option>
-        </select>
-        <label>年&nbsp;&nbsp;&nbsp;</label>
+                    </tr>
+                </thead>
+                <tr>
+                    <td colspan="2">有效用户</td>
+                    <td colspan="2">@ViewBag.usercount</td>
+                </tr>
+                <tr>
+                    <td rowspan="2">未完成</td>
+                    <td>未接单</td>
+                    <td>@ViewBag.tocom</td>
+                    <td rowspan="2">@(ViewBag.tocom + @ViewBag.todo)</td>
+                </tr>
+                <tr>
+                    <td>已接单</td>
+                    <td>@ViewBag.todo</td>
+                </tr>
+                <tr>
+                    <td rowspan="2">已完成</td>
+                    <td>未支付</td>
+                    <td>@ViewBag.topay</td>
+                    <td rowspan="2">@(ViewBag.topay + @ViewBag.finish)</td>
+                </tr>
+                <tr>
+                    <td>完成</td>
+                    <td>@ViewBag.finish</td>
+                </tr>
+                <tr>
+                    <td colspan="2">取消</td>
+                    <td colspan="2">@ViewBag.cancel</td>
+                </tr>
 
-        <select>
-            <option value="6">6</option>
-            <option value="7">7</option>
-        </select>
-        <label>月</label>
-    </p>
-    <table class="table table-bordered" style="text-align:center; " cellspacing="0" cellpadding="0" width="270" align="center">
-        <thead>
-            <tr>
-                <td colspan="2">分类</td>
-                <td colspan="2">数量</td>
-
-            </tr>
-        </thead>
-        <tr>
-            <td colspan="2">有效用户</td>
-            <td colspan="2">@ViewBag.usercount</td>
-        </tr>
-        <tr>
-            <td rowspan="2">未完成</td>
-            <td>未接单</td>
-            <td>@ViewBag.tocom</td>
-            <td rowspan="2">@(ViewBag.tocom + @ViewBag.todo)</td>
-        </tr>
-        <tr>
-            <td>已接单</td>
-            <td>@ViewBag.todo</td>
-        </tr>
-        <tr>
-            <td rowspan="2">已完成</td>
-            <td>未支付</td>
-            <td>@ViewBag.topay</td>
-            <td rowspan="2">@(ViewBag.topay + @ViewBag.finish)</td>
-        </tr>
-        <tr>
-            <td>完成</td>
-            <td>@ViewBag.finish</td>
-        </tr>
-        <tr>
-            <td colspan="2">取消</td>
-            <td colspan="2">@ViewBag.cancel</td>
-        </tr>
-
-    </table>
-
+            </table>*@
+    </div>
 </div>
+<script type="text/javascript">
+    ///添加月份
+    function addMoun(nMou) {
+        // alert(new Date());
+        for (var i = 6 ; i <= nMou; i++) {
+            $('#mou').prepend('<option value="' + i + '">' + i + '</option>')
+        }
+        $('#mou').val(nMou);
+    }
+
+    $(function () {
+        var nMou = new Date().getMonth() + 1;
+
+        addMoun(nMou);
+        //  $('#mou').change(getDate());
+        $('#con').load('./GetWorkInfoPart?adminid=1&year=2015&moCu=' + nMou);
+
+        $('#mou').change(function () {
+            //alert($('#mou').val());
+            $('#con').html('');
+            $('#con').load('./GetWorkInfoPart?adminid=1&year=2015&mou=' + $('#mou').val());
+        });
+    })
+
+
+
+</script>

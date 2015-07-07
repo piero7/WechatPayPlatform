@@ -1,42 +1,41 @@
 ﻿
 
-    <table class="table table-bordered" style="text-align:center;">
-        <thead>
-            <tr>
-                <td>大类</td>
-                <td>小类</td>
-                <td>数量</td>
-                <td>总数</td>
-            </tr>
-        </thead>
+<table class="table table-bordered" style="text-align:center;">
+    <thead>
         <tr>
-            <td colspan="2">有效用户</td>
-            <td colspan="2">@ViewBag.usercount</td>
-        </tr>
-        <tr>
-            <td rowspan="2">未完成</td>
-            <td>未接单</td>
-            <td>@ViewBag.tocom</td>
-            <td rowspan="2">@(ViewBag.tocom + @ViewBag.todo)</td>
-        </tr>
-        <tr>
-            <td>已接单</td>
-            <td>@ViewBag.todo</td>
-        </tr>
-        <tr>
-            <td rowspan="2">已完成</td>
-            <td>未支付</td>
-            <td>@ViewBag.topay</td>
-            <td rowspan="2">@(ViewBag.topay + @ViewBag.finish)</td>
-        </tr>
-        <tr>
-            <td>完成</td>
-            <td>@ViewBag.finish</td>
-        </tr>
-        <tr>
-            <td colspan="2">取消</td>
-            <td colspan="2">@ViewBag.cancel</td>
-        </tr>
+            <td colspan="2">分类</td>
+            <td colspan="2">数量</td>
 
-    </table>
+        </tr>
+    </thead>
+    <tr>
+        <td colspan="2">有效用户</td>
+        <td colspan="2">@ViewBag.usercount</td>
+    </tr>
+    <tr>
+        <td rowspan="2">未完成</td>
+        <td>未接单</td>
+        <td>@ViewBag.tocom</td>
+        <td rowspan="2">@(ViewBag.tocom + @ViewBag.todo)</td>
+    </tr>
+    <tr>
+        <td>已接单</td>
+        <td>@ViewBag.todo</td>
+    </tr>
+    <tr>
+        <td rowspan="2">已完成</td>
+        <td>未支付</td>
+        <td>@ViewBag.topay</td>
+        <td rowspan="2">@(ViewBag.topay + @ViewBag.finish)</td>
+    </tr>
+    <tr>
+        <td>完成</td>
+        <td>@ViewBag.finish</td>
+    </tr>
+    <tr>
+        <td colspan="2">取消</td>
+        <td colspan="2">@ViewBag.cancel</td>
+    </tr>
+
+</table>
 
