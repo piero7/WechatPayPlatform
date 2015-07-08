@@ -3,6 +3,15 @@
 @{
     ViewBag.Title = "确认支付";
 }
+
+@section scripts{
+    @Scripts.Render("~/Scripts/labs.js")
+    @Scripts.Render("~/Scripts/jquery.raty.js")
+    @Styles.Render("~/Content/jquery.raty.css")
+
+}
+
+
 <style>
     .billstatus {
         font-weight: 700;
@@ -18,6 +27,7 @@
 
     .btn {
         background-color: rgba(228, 143, 24,1);
+        widows:100%;
     }
 
     .container-fluid {
@@ -42,8 +52,56 @@
         {
             <input type="hidden" name="billnumber" value="@Model.innerNumber" />
             <p class="buttonp">
-                <button class="btn btn-default" type="submit" style=" font-family:'Microsoft YaHei' ;font-size:small;font-weight:400; color: #FFF;">确认支付</button>
+                <button class="btn btn-default" type="submit" style=" font-family:'Microsoft YaHei' ;font-size:small;font-weight:400; color: #FFF;">确认完成</button>
             </p>
         }
     </div>
+    <div>
+        <span>接单速度 </span>
+        <span id="s1" data-path="../images"></span>
+    </div>
+    <div>
+        <span>。。。。 </span>
+        <span id="s2" data-path="../images"></span>
+    </div>
+    <div>
+        <span>服务质量 </span>
+        <span id="s3" data-path="../images"></span>
+    </div>
 </div>
+
+<script type="text/javascript">
+    var s1 = 0;
+    var s2 = 0;
+    var s3 = 0;
+
+    $(function () {
+        $("#s1").raty(
+            {
+                path: function () {
+                    return this.getAttribute('data-path');
+                },
+                click: function (score, evt) {
+                    s1 = score;
+                }
+            });
+        $("#s2").raty(
+           {
+               path: function () {
+                   return this.getAttribute('data-path');
+               },
+               click: function (score, evt) {
+                   s2 = score;
+               }
+           });
+        $("#s3").raty(
+           {
+               path: function () {
+                   return this.getAttribute('data-path');
+               },
+               click: function (score, evt) {
+                   s3 = score;
+               }
+           });
+    })
+</script>

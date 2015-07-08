@@ -193,18 +193,13 @@
         $.get('~/../../api/PayInfo/GetOpenidByCode?code=' + code, '', function (data) {
             openid = data;
             getBalance();
-
+            //获取优惠信息
             $.get("~/../../api/PayInfo/HasSales?openid=" + openid, null, function (data) {
                 if (data != null) {
                     $('#count').prepend('<option value="' + data.value + '" selected=true>' + data.text + '</option>');
                 }
             });
         });
-
-
-
-
-
 
         $('#confirm').click(function () {
             $('#confirm').addClass('hidden');

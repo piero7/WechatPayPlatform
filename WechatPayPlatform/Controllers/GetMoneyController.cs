@@ -45,7 +45,7 @@ namespace WechatPayPlatform.Controllers
         public ActionResult Pay(string billnumber)
         {
             var db = new ModelContext();
-            Bill bill = null;
+            ComeBill bill = null;
 
             bill = db.ComeBillSet.Include("User").FirstOrDefault(item => item.innerNumber == billnumber);
             if (bill.Status != ComeBillStatus.ToPay)
@@ -54,12 +54,11 @@ namespace WechatPayPlatform.Controllers
             }
             if (bill.Count > bill.User.Balance)
             {
-                string url = string.Format(
-                "https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri={1}&response_type=code&scope=snsapi_base&state={2}#wechat_redirect",
-                System.Configuration.ConfigurationManager.AppSettings["appid"],
-                System.Configuration.ConfigurationManager.AppSettings["baseurl"] + "/Pay/Index",
-                "cbill;您此次消费" + bill.Count + "元，还需充值" + (bill.Count - bill.User.Balance) + "元;" + bill.innerNumber);
-
+                    string url = string.Format(
+                    "https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri={1}&response_type=code&scope=snsapi_base&state={2}#wechat_redirect",
+                    System.Configuration.ConfigurationManager.AppSettings["appid"],
+                    System.Configuration.ConfigurationManager.AppSettings["baseurl"] + "/Pay/Index",
+                    "cbill;您此次消费" + bill.Count + "元，还需充值" + (bill.Count - bill.User.Balance) + "元;" + bill.innerNumber);
                 Response.Redirect(url);
 
             }

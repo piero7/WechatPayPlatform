@@ -370,7 +370,7 @@ namespace WechatPayPlatform.Controllers
             }
             if (!db.RechargeBillSet.Any(item => (item.UserId == user.UserId) && (item.IsSuccess ?? false)))
             {
-                return new { value = "1", text = "0.01" };
+                return new { value = "1", text = "0.01（首单优惠）" };
             }
             else
             {

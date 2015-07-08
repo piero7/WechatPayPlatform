@@ -39,7 +39,7 @@ namespace TestMachineClient
             //int retNum = client.Receive(result);
            // Console.WriteLine("Get reserve message :{0}", Encoding.ASCII.GetString(result, 0, retNum));
             string sendMessage = "";
-            int i = 0;
+           // int i = 0;
             while (true)
             {
                 sendMessage = Console.ReadLine();
