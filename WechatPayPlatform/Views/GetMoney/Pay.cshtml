@@ -13,6 +13,14 @@
 
 
 <style>
+    div {
+        font-family: 'Microsoft YaHei';
+        font-size: 1em;
+    }
+
+    label{
+        margin-bottom:0px;
+    }
     .billstatus {
         font-weight: 700;
         font-family: 'Microsoft YaHei';
@@ -27,7 +35,8 @@
 
     .btn {
         background-color: rgba(228, 143, 24,1);
-        widows:100%;
+        width:100%;
+        font-size:1.5em;
     }
 
     .container-fluid {
@@ -35,8 +44,18 @@
     }
 
     .thumbnail {
-        padding-top: 5px;
-        padding-left: 15px;
+        padding-top: -5px;
+        padding-left: 25px;
+    }
+
+    .sc{
+        width:100%;
+        padding-top : 25px;
+        padding-bottom :25px;
+    } 
+    .sc .scimag{
+        font-size:2em;
+        padding-left:25px;
     }
 </style>
 
@@ -48,25 +67,30 @@
         <p>位置：@Model.Address</p>
         <p>完成时间：@Model.FinishTime.Value.ToString("yyyy年MM月dd日 HH:mm")</p>
         <p> 金 额 ：@Model.Count  元 </p>
+        @* 评分 *@
+        <div class="sc">
+            <label>服务评价:</label>
+            <div>
+                <span>速 度 </span>
+                <span id="s1" class="scimag" data-path="../images" ></span>
+            </div>
+            <div>
+                <span>清 洁 </span>
+                <span class="scimag" id="s2" data-path="../images"></span>
+            </div>
+            <div>
+                <span>体 验 </span>
+                <span id="s3" class="scimag" data-path="../images"></span>
+            </div>
+        </div>
+        @* 隐藏订单号以及提交 *@
         @using (Html.BeginForm("Pay", "GetMoney", FormMethod.Post, new { role = "form", @class = "form-inline" }))
         {
             <input type="hidden" name="billnumber" value="@Model.innerNumber" />
             <p class="buttonp">
-                <button class="btn btn-default" type="submit" style=" font-family:'Microsoft YaHei' ;font-size:small;font-weight:400; color: #FFF;">确认完成</button>
+                <button class="btn btn-default" type="submit" style=" font-family:'Microsoft YaHei' ;font-size:large;font-weight:500; color: #FFF;">确认完成</button>
             </p>
         }
-    </div>
-    <div>
-        <span>接单速度 </span>
-        <span id="s1" data-path="../images"></span>
-    </div>
-    <div>
-        <span>。。。。 </span>
-        <span id="s2" data-path="../images"></span>
-    </div>
-    <div>
-        <span>服务质量 </span>
-        <span id="s3" data-path="../images"></span>
     </div>
 </div>
 
@@ -83,7 +107,10 @@
                 },
                 click: function (score, evt) {
                     s1 = score;
-                }
+                },
+                size: 8,
+                //starOn: 'star-on.png',
+                //starOff: 'star-off.png',
             });
         $("#s2").raty(
            {
@@ -103,5 +130,12 @@
                    s3 = score;
                }
            });
+
+        $('form').submit(function () {
+            if (s1 == 0 || s2 == 0 || s3 == 0) {
+                alert('您还没有完成评分~您的意见是我们进步的指向。');
+                return false;
+            }
+        });
     })
 </script>
