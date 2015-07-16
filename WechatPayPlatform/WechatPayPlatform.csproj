@@ -164,6 +164,7 @@
     <Compile Include="Controllers\BillInfoController.cs" />
     <Compile Include="Controllers\ComeBillController.cs" />
     <Compile Include="Controllers\ComeHelpController.cs" />
+    <Compile Include="Controllers\ShopController.cs" />
     <Compile Include="Controllers\GetMoneyController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PayController.cs" />
@@ -252,6 +253,10 @@
     <Compile Include="Migrations\201507070146159_addComeBillType.cs" />
     <Compile Include="Migrations\201507070146159_addComeBillType.Designer.cs">
       <DependentUpon>201507070146159_addComeBillType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507160125487_addLocationInfo.cs" />
+    <Compile Include="Migrations\201507160125487_addLocationInfo.Designer.cs">
+      <DependentUpon>201507160125487_addLocationInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Bill.cs" />
     <Compile Include="Models\DebugInfo.cs" />
@@ -379,6 +384,7 @@
     <None Include="Properties\PublishProfiles\WebApiToFile.pubxml" />
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Icon.png" />
+    <Content Include="Images\carpoint.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.9.1.js" />
@@ -399,6 +405,10 @@
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\npm.js" />
+    <Content Include="Scripts\upload\jquery.uploadify.min.js" />
+    <Content Include="Scripts\upload\uploadify-cancel.png" />
+    <Content Include="Scripts\upload\uploadify.css" />
+    <Content Include="Scripts\upload\uploadify.swf" />
     <Content Include="Scripts\WebApiTestClient.js" />
     <Content Include="Scripts\wechatHelper.js" />
     <Content Include="Web.config" />
@@ -437,6 +447,7 @@
     <Content Include="Views\ComeBill\Fail.cshtml" />
     <Content Include="Views\BillInfo\GetWorkInfo.cshtml" />
     <Content Include="Views\BillInfo\GetWorkInfoPart.cshtml" />
+    <Content Include="Views\BillInfo\BillDetail.cshtml" />
     <None Include="Views\BillInfo\Index.cshtml~" />
     <Content Include="Views\BillInfo\IndexWithOpenid.cshtml" />
     <Content Include="Views\ComeBill\ConfirmBill.cshtml" />
@@ -444,9 +455,12 @@
     <Content Include="Views\GetMoney\Pay.cshtml" />
     <Content Include="Views\GetMoney\Jump.cshtml" />
     <Content Include="Views\GetMoney\PayForMachineIndex.cshtml" />
+    <Content Include="Views\Shop\Index.cshtml" />
+    <Content Include="Views\Shop\AddInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Upload\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -520,6 +534,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201507070146159_addComeBillType.resx">
       <DependentUpon>201507070146159_addComeBillType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507160125487_addLocationInfo.resx">
+      <DependentUpon>201507160125487_addLocationInfo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

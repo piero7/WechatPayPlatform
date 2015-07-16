@@ -1,0 +1,93 @@
+﻿@{
+    ViewBag.Title = "添加门店信息";
+}
+
+<style>
+    .container {
+        max-width: 500px;
+    }
+
+    .page-header {
+        margin-left: -150px;
+        margin-right: -100px;
+    }
+</style>
+@Scripts.Render("~/Scripts/upload/jquery.uploadify.min.js")
+@Styles.Render("~/Scripts/upload/uploadify.css")
+<div class="container">
+    <div class="page-header">
+        <h1>门店<small>录入到店洗门店信息</small></h1>
+    </div>
+    @using (Html.BeginForm("Shop", "AddInfo", FormMethod.Post, new { role = "form", @class = "" }))
+    {
+        <div class="form-group">
+            <label>名称</label>
+            <input class="form-control" type="text" id="name" name="name" placeholder="商家详细名称" />
+        </div>
+
+        <div class="form-group">
+            <label for="address">地址</label>
+            <input class="form-control" type="text" id="address" name="address" placeholder="店铺地址" />
+        </div>
+        <div class="form-group">
+            <label>地图坐标</label>
+            <div class="form-inline">
+                <input class="form-control " type="text" id="x" placeholder="x坐标" />
+                <input class="form-control " type="text" id="x" placeholder="y坐标" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>联系电话</label>
+            <input class="form-control" type="tel" id="phone" />
+        </div>
+        <div class="form-group">
+            <label>最低消费</label>
+            <input class="form-control" type="number" id="Minimum" />
+        </div>
+        <div class="form-group">
+            <label>上传图像</label>
+            <div class="form-control">
+                <p>
+                    <span> 文件上传完毕</span>
+                    <input type="checkbox" id="hasfile"  readonly="readonly"/>
+                </p>
+                <div id="file_upload_1"></div>
+            </div>
+        </div>
+        <input type="hidden" id="filename" />
+    }
+
+</div>
+
+<script type="text/javascript">
+    var ddd = null;
+    $(function () {
+        $("#file_upload_1").uploadify({
+            swf: '/Scripts/upload/uploadify.swf',
+            uploader: '/shop/Upload',
+
+            width: 60,                          // 按钮的宽度
+            height: 23,                         // 按钮的高度
+            buttonText: "上传",                 // 按钮上的文字
+            buttonCursor: 'hand',                // 按钮的鼠标图标
+
+            fileObjName: 'Filedata',            // 上传参数名称
+
+            // 两个配套使用
+            fileTypeExts: "*.jpg;*.png",             // 扩展名
+            fileTypeDesc: "请选择 jpg png 文件",     // 文件说明
+
+            auto: true,                // 选择之后，自动开始上传
+            multi: true,               // 是否支持同时上传多个文件
+            queueSizeLimit: 5,         // 允许多文件上传的时候，同时上传文件的个数
+            'onUploadSuccess': function (file, data, response) {
+                //alert(response);
+                //alert(data);
+
+                $('#filename').val(JSON.parse(data).fn);
+            }
+
+        });
+    });
+
+</script>

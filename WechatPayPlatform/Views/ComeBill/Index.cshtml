@@ -27,14 +27,28 @@
             /*padding-left: 5%;*/
             padding-top: 5px;
         }
+
+    .map {
+        width: 100%;
+        height: 300px;
+    }
 </style>
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=9b65d2a0ee90d20ad5b98e7ebb765cb9"></script>
 
 <div class="container">
+
+    <div>
+        <p><label>地址</label><span> 点击地图标注车辆位置</span></p>
+        <div class="map" id="map"></div>
+        <p id="address" readonly></p>
+    </div>
     @using (Html.BeginForm("Index", "ComeBill", FormMethod.Post, new { role = "form", @class = "form-inline", onsubmit = "getElementById('subBtn').disabled=true;return true;" }))
     {
+        <input type="hidden" id="x" />
+        <input type="hidden" id="y" />
         <div class="form-group">
             <label for="station">位置描述</label>
-            <input class="form-control" id="station" name="station" placeholder="爱车停放位置，如：硕和城 18号楼门口">
+            <input class="form-control" id="station" name="station" placeholder="爱车停放位置，如：硕和城 15号楼门口">
         </div>
         <div class="form-group">
             <label for="carnumber">车牌号</label>
@@ -79,6 +93,66 @@
     var stationList = null;
     var time = null;
     var openid = '@Model';
+
+
+    function initialize(loa) {
+        var position = new AMap.LngLat(loa.x, loa.y);
+        var mapObj = new AMap.Map("map", {
+            view: new AMap.View2D({//创建地图二维视口
+                center: position,//创建中心点坐标
+                zoom: 15, //设置地图缩放级别
+                rotation: 0 //设置地图旋转角度
+            }),
+            lang: "zh_cn"//设置地图语言类型，默认：中文简体
+        });//创建地图实例
+        var marker = new AMap.Marker({
+            map: mapObj,
+            position: mapObj.getCenter(),
+            icon: "http://webapi.amap.com/images/0.png",
+            offset: new AMap.Pixel(-10, -34)
+        });
+        getAddressStr(mapObj.getCenter());
+
+        var listener = AMap.event.addListener(mapObj, "dragend", function (e) {
+            var lnglat = mapObj.getCenter();
+            mapObj.clearMap();
+            var marker = new AMap.Marker({
+                map: mapObj,
+                position: lnglat,
+                icon: "http://webapi.amap.com/images/0.png",
+                offset: new AMap.Pixel(-10, -34)
+            });
+            mapObj.setCenter(lnglat);
+            getAddressStr(lnglat);
+        });
+    }
+
+    function getAddressStr(loa) {
+        $('#x').val(loa.lng);
+        $('#y').val(loa.lat);
+
+        //加载地理编码插件
+        var geocoder;
+        AMap.service(["AMap.Geocoder"], function () {
+            geocoder = new AMap.Geocoder({
+                radius: 1000,
+                extensions: "all"
+            });
+            //逆地理编码
+            geocoder.getAddress(loa, function (status, result) {
+                //取回逆地理编码结果
+                if (status === 'complete' && result.info === 'OK') {
+                    alert(result.regeocode.formattedAddress);
+                    $('#address').html(result.regeocode.formattedAddress);
+                }
+                else {
+                    $('#address').html('地址获取失败。。。');
+
+                }
+            });
+        })
+    }
+
 
     function getStation() {
         var url = '~/../../api/ComeHelp/GetStationList';
@@ -150,12 +224,21 @@
 
     }
 
+    function getLocation() {
+        //116.39946, 39.907629
+        initialize({ x: 121.527744, y: 31.301753 });
+    }
+
     $(document).ready(function () {
+        //获取当前地址并加载地图
+        getLocation();
+     
 
         // getStation();
         //alert(openid);
         getStartDate();
         getInfo();
+
     });
 
 </script>

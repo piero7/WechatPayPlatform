@@ -207,6 +207,15 @@ namespace WechatPayPlatform.Controllers
             return View();
         }
 
-    }
+        [HttpGet]
+        public ActionResult BillDetail(string billNumber)
+        {
+            var db = new ModelContext();
+            var bill = db.ComeBillSet.FirstOrDefault(item => item.innerNumber == billNumber);
+
+            return View(bill);
+        }
+
+    } 
 }
 

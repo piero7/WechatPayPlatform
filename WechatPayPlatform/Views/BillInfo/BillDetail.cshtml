@@ -1,0 +1,97 @@
+﻿@model WechatPayPlatform.Models.ComeBill
+@{
+    ViewBag.Title = "BillDetail";
+
+}
+<style>
+    .thumbnail {
+        margin-top: 10px;
+    }
+
+
+    .billstatus {
+        font-weight: 700;
+        font-family: 'Microsoft YaHei';
+        color: orange;
+    }
+    .map{
+        width:100%;
+        height:250px;
+    }
+
+    h3{
+        margin-top:0px;
+        margin-bottom:15px;
+    }
+
+</style>
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=9b65d2a0ee90d20ad5b98e7ebb765cb9"></script>
+<div class="container">
+    <div class="thumbnail">
+        <div class="caption">
+            <h3 class="billstatus"> @(WechatPayPlatform.Controllers.Helper.GetBillStatusName(Model.Status))</h3>
+            <p id="map" class="map"></p>
+
+            <p>
+                下单时间：@Model.CreateDate.Value.ToString("yyyy年MM月dd日 HH:mm")
+            </p>
+
+            <p>
+                车牌号：@Model.CarNumber
+            </p>
+            <p>
+                订单号：@Model.innerNumber
+            </p>
+            <p>
+                联系方式：@Model.PhoneNumber
+            </p>
+            <p>
+                预约时间：@(Model.StartTime.Value.ToString("MM月dd日 HH:mm") + " - " + Model.EndTime.Value.ToString("HH:mm"))
+            </p>
+            <p>
+                位置：@Model.Address
+            </p>
+            <p>
+                描述：@Model.Describe
+            </p>
+            @if (Model.Status == WechatPayPlatform.Models.ComeBillStatus.Finish || Model.Status == WechatPayPlatform.Models.ComeBillStatus.Complain || Model.Status == WechatPayPlatform.Models.ComeBillStatus.ToPay)
+            {
+            <p>
+                完成时间：@(Model.FinishTime.Value.ToString("yyyy年MM月dd日 HH:mm"))
+            </p>
+            }
+            else if (Model.Status == WechatPayPlatform.Models.ComeBillStatus.Cancel)
+            {
+            <p>
+                取消时间：@(Model.FinishTime.Value.ToString("yyyy年MM月dd日 HH:mm"))
+            </p>
+            }
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    function initialize() {
+        var position = new AMap.LngLat(@Model.LocationX,@Model.LocationY);
+        var mapObj = new AMap.Map("map", {
+            view: new AMap.View2D({//创建地图二维视口
+                center: position,//创建中心点坐标
+                zoom: 17, //设置地图缩放级别
+                rotation: 0,//设置地图旋转角度
+                dragEnable: true,
+            }),
+            lang: "zh_cn"//设置地图语言类型，默认：中文简体
+        });//创建地图实例
+        var marker = new AMap.Marker({
+            map: mapObj,
+            position: mapObj.getCenter(),
+            icon: "/images/carpoint.png",
+            offset: new AMap.Pixel(-17, -45)
+        });
+
+    }
+
+    $(function () {
+        initialize();
+    })
+</script>

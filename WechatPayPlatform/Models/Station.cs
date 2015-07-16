@@ -29,6 +29,10 @@ namespace WechatPayPlatform.Models
         public virtual Administrator Administrator { get; set; }
 
         public string Remarks { get; set; }
+
+        public double? LocationX { get; set; }
+
+        public double? LocationY { get; set; }
     }
 
     public class Area
@@ -41,17 +45,17 @@ namespace WechatPayPlatform.Models
         public string Discribe { get; set; }
 
         public string Remarks { get; set; }
+
+        public int? AdminId { get; set; }
+
+        [ForeignKey("AdminId")]
+        public virtual Administrator Admin { get; set; }
     }
 
     public class Administrator
     {
         [Key]
         public int AdministratorId { get; set; }
-
-        public int? AreaId { get; set; }
-
-        [ForeignKey("AreaId")]
-        public virtual Area Area { get; set; }
 
         public string Name { get; set; }
 

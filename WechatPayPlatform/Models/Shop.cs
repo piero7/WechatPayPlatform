@@ -26,6 +26,13 @@ namespace WechatPayPlatform.Models
 
         public string Remarks { get; set; }
 
+        public string ImgPath { get; set; }
+
+        /// <summary>
+        /// 最低消费
+        /// </summary>
+        public double? Minimum { get; set; }
+
     }
 
 

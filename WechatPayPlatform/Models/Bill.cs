@@ -91,7 +91,9 @@ namespace WechatPayPlatform.Models
         [ForeignKey("ComeBillTypeId")]
         public ComeBillType BillType { get; set; }
 
+        public double? LocationX { get; set; }
 
+        public double? LocationY { get; set; }
 
     }
 
