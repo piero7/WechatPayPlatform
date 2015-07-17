@@ -20,6 +20,13 @@ namespace WechatPayPlatform.Controllers
             //    return View((object)"testtest");
             //}
             var openid = helper.GetOpenidByCode(code);
+            var db = new ModelContext();
+            var user = db.WechatUserSet.FirstOrDefault(item => item.OpenId == openid);
+            if(user != null )
+            {
+                db.ComeBillSet.Any(item => item.UserId == user.UserId && (item.Status != ComeBillStatus.Finish || item.Status != ComeBillStatus.Cancel));
+
+            }
 
             return View((object)openid);
         }

@@ -38,15 +38,22 @@ namespace WechatPayPlatform.Controllers
                 return this.HttpNotFound();
             }
 
-            // 保存到 ~/photos 文件夹中，名称不变
-            string filename = System.IO.Path.GetFileName(Filedata.FileName);
+            // 保存到 ~/upload 文件夹中，名称不变
+        getfileName: string filename = DateTime.Now.GetHashCode().ToString();
+
+            //string filename = System.IO.Path.GetFileName(Filedata.FileName);
             string virtualPath = string.Format("~/upload/{0}", filename);
 
             // 转换成绝对路径
             string path = this.Server.MapPath(virtualPath);
-   
+
+            if (System.IO.File.Exists(path))
+            {
+                goto getfileName;
+            }
+
             Filedata.SaveAs(path);
-            return this.Json(new {fn = filename});
+            return this.Json(new { fn = filename });
         }
 
     }
