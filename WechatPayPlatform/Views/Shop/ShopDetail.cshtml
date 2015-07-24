@@ -1,0 +1,174 @@
+﻿@model WechatPayPlatform.Models.Shop
+
+@{
+    ViewBag.Title = "店铺信息";
+}
+@section scripts{
+    @Scripts.Render("~/Scripts/labs.js")
+    @Scripts.Render("~/Scripts/jquery.raty.js")
+    @*@Styles.Render("~/Content/jquery.raty.css")*@
+}
+
+<style>
+    body {
+        background-color: whitesmoke;
+    }
+
+    * {
+        font-family: 'Microsoft YaHei UI';
+    }
+
+    .thumbnail {
+        margin-bottom: 1px;
+        margin-top: 5px;
+    }
+
+        .thumbnail > p, div {
+            padding-left: 3px;
+            padding-top: 5px;
+        }
+
+
+
+    .row {
+        padding-left: 5px;
+    }
+
+    .titleImg {
+        width: 100%;
+        height: 10em;
+    }
+
+        .titleImg > img {
+            width: 100%;
+            height: 100%;
+        }
+
+    .name {
+        font-size: 14px;
+        font-weight: 600;
+        /*padding-left: 25px;*/
+    }
+
+    .liimg {
+        width: 20px;
+    }
+
+    .showscore {
+        width: 90%;
+        background-color: orange;
+        color: white;
+        font-weight: 600;
+        position: fixed;
+        bottom: 10px;
+    }
+
+    .modal {
+        padding-top: 55%;
+    }
+
+    #star {
+        padding-bottom: 15px;
+        padding-left: 30px;
+    }
+
+    .submitscore {
+        color: white;
+        width: 85%;
+        background-color: orange;
+        margin-bottom: 10px;
+    }
+    /*.col-xs-* {
+        padding-left: 1px;
+        padding-right: 2px;
+    }*/
+</style>
+
+<div class="container">
+    <div class="titleImg">
+        <img src="~/Upload/@Model.ImgPath" />
+    </div>
+    <div class="thumbnail">
+        <p class="name">
+            <span>
+                @Model.Name
+            </span>
+        </p>
+    </div>
+    <div class="thumbnail score">
+        <p class="row">
+            <span class="col-xs-4"> 用户评分：</span>
+            <img class="col-xs-8" id="score" style="width:120px; margin-left:-25px;" src="~/Images/star@(Convert.ToInt32(Model.Score.GetAverage())).png" />
+        </p>
+    </div>
+    <div class="thumbnail">
+        <p>
+            <img src="~/Images/phone.png" class="liimg" />
+            <a href="tel:@Model.Phone">@Model.Phone</a>
+        </p>
+        <p>
+            <img src="~/Images/shophour.png" class="liimg" />
+            <span>@Model.ShopHours</span>
+        </p>
+        <p>
+            <img src="~/Images/address.png" class="liimg" />
+            <span>@Model.Address</span>
+        </p>
+    </div>
+    <div class="thumbnail">
+        <div>
+            <span>消费情况：</span>
+            <span>
+                @Model.Minimum 元起
+            </span>
+        </div>
+    </div>
+    <input class="btn showscore" role="button" type="button" id="setScore" style="width:92%;border:none;background-color:orange;" value="我要评分" data-toggle="modal" data-target=".bs-example-modal-sm" />
+</div>
+
+
+<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" id="modal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <span>请写下您的评分</span>
+            <div id="star" data-path="~/../../Images">
+
+            </div>
+            <div style="text-align:center;">
+                <input type="button" role="button" class="btn submitscore" style="background-color:orange; width:85%; font-size:10px;" value="提交评分" id="submitScore" onclick="submitScore()" />
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var s1 = 0;
+    var shopid = @Model.ShopId;
+
+    function submitScore() {
+        $('#submitScore').val('正在提交...');
+        $('#submitScore').attr('disabled',"true");
+        $('#star').raty('readOnly', true);
+        $.get('~/../../api/shopHelp/addScore?shopid='+shopid+'&score='+s1,null,function(data){
+            $('#setScore').attr('disabled',"true");
+            $('#setScore').val('您已评分');
+            $('#modal').modal('hide');
+            $('#score').attr('src','~/../../Images/star'+data+'.png');
+        });
+    }
+
+    $(function () {
+        $("#star").raty(
+            {
+                path: function () {
+                    return this.getAttribute('data-path');
+                },
+                click: function (score, evt) {
+                    s1 = score;
+                    //$('#s1').val(s1);
+                },
+                size: 8,
+                starOn: 'star-on-big.png',
+                starOff: 'star-off-big.png',
+            });
+    })
+</script>

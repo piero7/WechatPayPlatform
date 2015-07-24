@@ -95,6 +95,11 @@ namespace WechatPayPlatform.Models
 
         public double? LocationY { get; set; }
 
+        public int? NeighborhoodId { get; set; }
+
+        [ForeignKey("NeighborhoodId")]
+        public virtual Neighborhood Neighborhood { get; set; }
+
     }
 
     public class ComeBillType

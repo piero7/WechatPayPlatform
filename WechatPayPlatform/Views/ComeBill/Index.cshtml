@@ -38,17 +38,22 @@
 <div class="container">
 
     <div>
-        <p><label>地址</label><span> 点击地图标注车辆位置</span></p>
+        <p><label>地址</label><span> 拖动地图标注车辆位置</span></p>
         <div class="map" id="map"></div>
-        <p id="address" readonly></p>
     </div>
     @using (Html.BeginForm("Index", "ComeBill", FormMethod.Post, new { role = "form", @class = "form-inline", onsubmit = "getElementById('subBtn').disabled=true;return true;" }))
     {
-        <input type="hidden" id="x" />
-        <input type="hidden" id="y" />
+        <input type="hidden" id="x" name="x" />
+        <input type="hidden" id="y" name="y" />
+        <input type="hidden" id="village" />
+        <div class="form-group">
+            <label> 所在小区</label>
+            <select id="villageid" class="form-control" name="village"></select>
+        </div>
+
         <div class="form-group">
             <label for="station">位置描述</label>
-            <input class="form-control" id="station" name="station" placeholder="爱车停放位置，如：硕和城 15号楼门口">
+            <input class="form-control" id="station" name="station" placeholder="如：15号楼门口">
         </div>
         <div class="form-group">
             <label for="carnumber">车牌号</label>
@@ -64,7 +69,7 @@
         </div>
         <div class="form-group">
             <label for="phone">车辆描述</label>
-            <input type="text" class="form-control" id="desc" name="desc" placeholder="请简单叙述车辆信息，如：颜色" value="">
+            <input type="text" class="form-control" id="desc" name="desc" placeholder="请简单叙述车辆信息，如：黑色 帕萨特" value="">
         </div>
         <div class="form-group">
             <input type="hidden" id="openid" name="openid" value="@Model" />
@@ -81,7 +86,7 @@
 
 
         <div style="text-align:center">
-            <button id="subBtn" type="submit" class="btn btn-default" style="margin-top:4%; background-color :orange;color: #FFF; font-family:'Microsoft YaHei'; font-weight:600;width:100%;font-size:1.5em">
+            <button id="subBtn" type="submit" class="btn" onclick=" return checkData();" style="margin-top:4%; background-color :orange;color: #FFF; font-family:'Microsoft YaHei'; font-weight:600;width:100%;font-size:1.5em">
                 马上预约
             </button>
         </div>
@@ -93,14 +98,20 @@
     var stationList = null;
     var time = null;
     var openid = '@Model';
+    var isBusy = false;
+    var appid = '@ViewBag.appid';
+    var timestamp = 1420774989;
+    var nonceStr = '2nDgiWM7gCxhL8v0';
+    var sign = '';
 
+    var ddd=null;
 
     function initialize(loa) {
         var position = new AMap.LngLat(loa.x, loa.y);
         var mapObj = new AMap.Map("map", {
             view: new AMap.View2D({//创建地图二维视口
                 center: position,//创建中心点坐标
-                zoom: 15, //设置地图缩放级别
+                zoom: 17, //设置地图缩放级别
                 rotation: 0 //设置地图旋转角度
             }),
             lang: "zh_cn"//设置地图语言类型，默认：中文简体
@@ -108,10 +119,10 @@
         var marker = new AMap.Marker({
             map: mapObj,
             position: mapObj.getCenter(),
-            icon: "http://webapi.amap.com/images/0.png",
+            icon: "~/../../Images/carpoint.png",
             offset: new AMap.Pixel(-10, -34)
         });
-        getAddressStr(mapObj.getCenter());
+        getVillage(mapObj.getCenter());
 
         var listener = AMap.event.addListener(mapObj, "dragend", function (e) {
             var lnglat = mapObj.getCenter();
@@ -119,11 +130,11 @@
             var marker = new AMap.Marker({
                 map: mapObj,
                 position: lnglat,
-                icon: "http://webapi.amap.com/images/0.png",
+                icon: "~/../../Images/carpoint.png",
                 offset: new AMap.Pixel(-10, -34)
             });
             mapObj.setCenter(lnglat);
-            getAddressStr(lnglat);
+            getVillage(lnglat);
         });
     }
 
@@ -153,37 +164,89 @@
         })
     }
 
+    //获取可选择小区
+    function getVillage(loa) {
+        $('#x').val(loa.lng);
+        $('#y').val(loa.lat);
 
-    function getStation() {
-        var url = '~/../../api/ComeHelp/GetStationList';
-        $.get(url, function (data) {
-            station = data;
-            $.each(data, function (index, value) {
-                $('#station').append(' <option value=' + value.id + '>' + value.name + '</li>')
-            })
+        $.get('~/../../api/ComeHelp/GetVillageList?x=' + loa.lng + '&y=' + loa.lat, null, function (data) {
+            $('#villageid').html('');
+            data.forEach(function (item) {
+                $('#villageid').append(' <option value=' + item.NeighborhoodId + '>' + item.Name + '</option>')
+            });
+            getFreeHour($('#villageid').val());
+        });
+    }
+
+    //获取接单时间
+    function getFreeHour(villageid) {
+        $('#endtime').html('');
+        if(villageid ==name){
+            return false;
+        }
+        $.get('~/../../api/ComeHelp/GetFreeHour?villageId=' + villageid, null, function (data) {
+            var sh = 0;
+            if (data[0] != -1) {
+                sh = data[0];
+            }
+            var eh = 24;
+            if (data[1] != -1) {
+                eh = data[1];
+            }
+            if (sh >= eh) {
+                eh = eh + 24;
+            }
+
+
+            var date = new Date();
+            var min = date.getMinutes() + 30;
+            var hour = date.getHours() + 1;
+            for (i = 0; i < 24; i++) {
+                if (i + hour < sh) {
+                    continue;
+                }
+                else if (i + hour > eh - 1) {
+                    break;
+                }
+                var nhour = hour + i;
+                var nhourStr = '';
+                if (nhour > 24) {
+                    //nhour -= 24;
+                    nhourStr = '明天';
+                    nhourStr += (nhour - 24).toString();
+                }
+                else {
+                    nhourStr += (nhour).toString();;
+                }
+
+                var nnhour = new Number;
+                nnhour = nhour + 1;
+                var nnhourStr = nnhour.toString();
+                if (nnhour > 24) {
+                    nnhour -= 24;
+                    nnhourStr = '明天' + nnhour;
+                }
+
+                $('#endtime').append(' <option >' + nhourStr + ':00 -' + nnhourStr + ':00' + '</li>')
+            }
+
         })
     }
+
+
+    //function getStation() {
+    //    var url = '~/../../api/ComeHelp/GetStationList';
+    //    $.get(url, function (data) {
+    //        station = data;
+    //        $.each(data, function (index, value) {
+    //            $('#station').append(' <option value=' + value.NeighborhoodId + '>' + value.Name + '</li>')
+    //        })
+    //    })
+    //}
     function getStartDate() {
         var date = new Date();
         var min = date.getMinutes() + 30;
         var hour = date.getHours() + 1;
-        //if (min >= 60) {
-        //    hour++;
-        //    min -= 60;
-        //}
-        //if (min < 10) {
-        //    min = '0' + min.toString();
-        //}
-        //if (hour < 10) {
-        //    hour = '0' + hour.toString();
-        //}
-
-
-        //time = hour + ':' + min;
-        //// alert(time);
-        //$('#endtime').val(time);
-        //$('#endtime').attr('min', time);
-
         for (i = 0; i < 24; i++) {
 
             var nhour = hour + i;
@@ -205,11 +268,10 @@
                 nnhourStr = '明天' + nnhour;
             }
 
-            $('#endtime').append(' <option>' + nhourStr + ':00 -' + nnhourStr + ':00' + '</li>')
-
+            $('#endtime').append(' <option >' + nhourStr + ':00 -' + nnhourStr + ':00' + '</li>')
         }
-
     }
+
 
     function getInfo() {
         var url = '~/../../api/ComeHelp/GetUserInfo?openid=' + openid;
@@ -225,20 +287,66 @@
     }
 
     function getLocation() {
+        //TODO： 通过微信api获取用户位置！
         //116.39946, 39.907629
-        initialize({ x: 121.527744, y: 31.301753 });
+        wx.getLocation({
+            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+            success: function (res) {
+                //var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                //var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                //var speed = res.speed; // 速度，以米/每秒计
+                //var accuracy = res.accuracy; // 位置精度
+                ddd =res;
+                initialize({ x: res.longitude, y: res.latitude});
+            }
+        });
+
+        //initialize({ x: 121.527744, y: 31.301753 });
     }
 
-    $(document).ready(function () {
+    function checkData(){
+        if($('#village').val() == null || $('#village').val().length<1){
+            alert('请先选择车辆所在小区。');
+            return false;
+        }
+    }
+
+    wx.ready(function(){
         //获取当前地址并加载地图
         getLocation();
-     
+    });
+
+    $(document).ready(function () {
+        var signdata = {
+            'str': nonceStr,
+            'time': timestamp,
+        };
+        $.post('~/../../api/ComeHelp/GetJsSign?str=' + nonceStr + '&time=' + timestamp, { '': window.location.href }, function (data) {
+            //alert(data);
+            sign = data;
+            wx.config({
+                debug: @ViewBag.isJsDebug,
+                appId: appid,
+                timestamp: timestamp,
+                nonceStr: nonceStr,
+                signature: sign,
+                jsApiList: ['getLocation',]
+            });
+
+        }, 'json');
+
+        //选择小区更改事件
+        $('#villageid').change(function () {
+            $('#village').val($('#villageid').val());
+            // alert($('#villageid').val());
+            getFreeHour($('#villageid').val());
+        });
+
 
         // getStation();
         //alert(openid);
-        getStartDate();
+        //  getStartDate();
         getInfo();
-
     });
 
 </script>

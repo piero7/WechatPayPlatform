@@ -19,16 +19,27 @@ namespace WechatPayPlatform.Controllers
             //{
             //    return View((object)"testtest");
             //}
-            var openid = helper.GetOpenidByCode(code);
+            var openid = string.Empty;
+            openid = helper.GetOpenidByCode(code);
             var db = new ModelContext();
             var user = db.WechatUserSet.FirstOrDefault(item => item.OpenId == openid);
-            if(user != null )
+            //var tmp = db.ComeBillSet.Where(item => item.UserId == user.UserId && item.Status != ComeBillStatus.Finish && item.Status != ComeBillStatus.Cancel);
+            if (user != null && db.ComeBillSet.Any(item => item.UserId == user.UserId && item.Status != ComeBillStatus.Finish && item.Status != ComeBillStatus.Cancel))
             {
-                db.ComeBillSet.Any(item => item.UserId == user.UserId && (item.Status != ComeBillStatus.Finish || item.Status != ComeBillStatus.Cancel));
-
+                return RedirectToAction("NotFinishedBill", new { open = openid });
             }
 
+            ViewBag.appid = System.Configuration.ConfigurationManager.AppSettings["appid"];
+            ViewBag.isJsDebug = System.Configuration.ConfigurationManager.AppSettings["IsJsDebug"];
+
             return View((object)openid);
+        }
+
+        [HttpGet]
+        public ActionResult NotFinishedBill(string open)
+        {
+            ViewBag.openid = open;
+            return View();
         }
 
         [HttpGet]
@@ -43,13 +54,12 @@ namespace WechatPayPlatform.Controllers
             return View();
         }
 
-        //public ActionResult Index(string openid, string station, string carnumber, string endtime, string phone, string desc)
-        //{
-        //    return View("Seccess");
-        //}
+
         [HttpPost]
         public ActionResult Index(FormCollection values)
         {
+            var db = new ModelContext();
+
             string location = values["station"];
             string carnumber = values["carnumber"];
             string time = values["endtime"];
@@ -57,6 +67,10 @@ namespace WechatPayPlatform.Controllers
             string desc = values["desc"];
             string openid = values["openid"];
 
+            //小区
+            int villageId = int.Parse(values["village"]);
+            var village = db.NeighborhoodSet.Include("Station.Administrator").Include("Station.Area.Admin").First(item => item.NeighborhoodId == villageId);
+            //服务时间
             if (string.IsNullOrEmpty(openid) || openid.Contains("errcode"))
             {
                 return RedirectToAction("Fail");
@@ -71,7 +85,6 @@ namespace WechatPayPlatform.Controllers
                 time = time.Replace("明天", "");
             }
             starttime = starttime.AddHours(Convert.ToInt32(time.Replace(":00", "").Split(new char[] { '-' })[0]));
-            var db = new ModelContext();
 
             //用户信息
             var user = db.WechatUserSet.FirstOrDefault(item => item.OpenId == openid);
@@ -89,7 +102,6 @@ namespace WechatPayPlatform.Controllers
                 db.SaveChanges();
 
                 Helper.GetUserInfo(user);
-
             }
             if (user.PhoneNumber != phone)
             {
@@ -119,14 +131,26 @@ namespace WechatPayPlatform.Controllers
             //订单号
             string billnumner = "c" + SocketController.GetHexString(DateTime.Now.Year - 2015) + SocketController.GetHexString(DateTime.Now.Month) + DateTime.Now.ToString("ddHHmmss") + user.OpenId.Substring(openid.Length - 6, 5);
 
-            var adminid = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["workerid"]);
+            //var adminid = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["workerid"]);
+            var adminid = village.Station.Administrator.AdministratorId;
 
-            //get the bill type
-            bool isFirst = db.ComeBillSet.Where(item => item.UserId == user.UserId).Any(item => item.Status != ComeBillStatus.Cancel);
 
+
+            //get the bill type & price
+            bool isFirst = !db.ComeBillSet.Where(item => item.UserId == user.UserId).Any(item => item.Status != ComeBillStatus.Cancel);
+
+            double count = 0;
+            if (isFirst)
+            {
+                count = 0.01;
+            }
+            else
+            {
+                count = village.Price ?? 0;
+            }
 
             //noctice worker
-            Helper.SendWorkMessage(adminid, location, car, desc, time);
+            Helper.SendWorkMessage(village.Station.Administrator.Account + "|" + village.Station.Area.Admin.Account, location, car, desc, time);
 
             var bill = new ComeBill
                         {
@@ -141,8 +165,9 @@ namespace WechatPayPlatform.Controllers
                             innerNumber = billnumner,
                             UserId = user.UserId,
                             AdminId = adminid,
-                            // Count = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["billPrice"])
+                            Count = count,
                             ComeBillTypeId = isFirst ? 1 : 2,
+                            NeighborhoodId = villageId,
                         };
             //if (openid == "testtest")
             //{
@@ -151,7 +176,7 @@ namespace WechatPayPlatform.Controllers
 
             db.ComeBillSet.Add(bill);
             db.SaveChanges();
-            bill.Count = bill.BillType.Price ?? 0;
+            //bill.Count = bill.BillType.Price ?? 0;
             db.SaveChanges();
 
             return RedirectToAction("IndexWithOpenid", "BillInfo", new { openid = openid });
@@ -175,9 +200,11 @@ namespace WechatPayPlatform.Controllers
             var billnumber = valuse["billnumber"];
 
             var db = new ModelContext();
-            var bill = db.ComeBillSet.FirstOrDefault(item => item.innerNumber == billnumber);
+            var bill = db.ComeBillSet.Include("User").FirstOrDefault(item => item.innerNumber == billnumber);
             bill.Status = ComeBillStatus.Working;
             db.SaveChanges();
+
+            Helper.SendConfirmMsg(bill);
 
             return RedirectToAction("WorkerBillInfo", "BillInfo", new { adminid = adminid });
         }
@@ -208,11 +235,12 @@ namespace WechatPayPlatform.Controllers
 
 
             var db = new ModelContext();
-            var bill = db.ComeBillSet.FirstOrDefault(item => item.innerNumber == billnumber);
+            var bill = db.ComeBillSet.Include("User").FirstOrDefault(item => item.innerNumber == billnumber);
             bill.Status = ComeBillStatus.Cancel;
             bill.FinishTime = DateTime.Now;
 
             db.SaveChanges();
+            Helper.SendCancelMsg(bill);
             return RedirectToAction("WorkerBillInfo", "BillInfo", new { adminid = adminid });
         }
 

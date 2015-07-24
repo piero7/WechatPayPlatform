@@ -18,7 +18,7 @@
     <div class="page-header">
         <h1>门店<small>录入到店洗门店信息</small></h1>
     </div>
-    @using (Html.BeginForm("Shop", "AddInfo", FormMethod.Post, new { role = "form", @class = "" }))
+    @using (Html.BeginForm("AddInfo", "Shop", FormMethod.Post, new { role = "form", @class = "" }))
     {
         <div class="form-group">
             <label>名称</label>
@@ -32,36 +32,57 @@
         <div class="form-group">
             <label>地图坐标</label>
             <div class="form-inline">
-                <input class="form-control " type="text" id="x" placeholder="x坐标" />
-                <input class="form-control " type="text" id="x" placeholder="y坐标" />
+                <input class="form-control " type="text" id="x" name="x" placeholder="x坐标" />
+
+                <input class="form-control " type="text" id="x" name="y" placeholder="y坐标" />
             </div>
         </div>
         <div class="form-group">
             <label>联系电话</label>
-            <input class="form-control" type="tel" id="phone" />
+            <input class="form-control" type="tel" id="phone" name="phone" />
         </div>
         <div class="form-group">
             <label>最低消费</label>
-            <input class="form-control" type="number" id="Minimum" />
+            <input class="form-control" type="text" id="minimum" name="minimun" />
+        </div>
+        <div class="form-group">
+            <label>营业时间</label>
+            <div class="form-inline">
+                <select id="startt" name="startt"></select>
+                <span> &nbsp;~ &nbsp;</span>
+                <select id="endt" name="endt"></select>
+            </div>
         </div>
         <div class="form-group">
             <label>上传图像</label>
-            <div class="form-control">
-                <p>
-                    <span> 文件上传完毕</span>
-                    <input type="checkbox" id="hasfile"  readonly="readonly"/>
-                </p>
+            <div class="form-inline">
+                @*<p>
+                        <span> 文件上传完毕</span>
+                        <input type="checkbox" id="hasfile" readonly="readonly" />
+                    </p>*@
                 <div id="file_upload_1"></div>
             </div>
         </div>
-        <input type="hidden" id="filename" />
+        <input type="hidden" id="filename" name="filename" />
+        <input type="hidden" id="shophours" name="shophours" />
+        <input type="submit" class="btn" value="添加" />
     }
 
 </div>
 
 <script type="text/javascript">
     var ddd = null;
+
+    function AddTimes() {
+
+        for (var i = 0 ; i < 24 ; i++) {
+            $('#endt').append(' <option value="' + i + '">' + i + ':00' + '</option>');
+            $('#startt').append(' <option value="' + i + '">' + i + ':00' + '</option>');
+        }
+    }
+
     $(function () {
+        AddTimes();
         $("#file_upload_1").uploadify({
             swf: '/Scripts/upload/uploadify.swf',
             uploader: '/shop/Upload',
@@ -83,11 +104,13 @@
             'onUploadSuccess': function (file, data, response) {
                 //alert(response);
                 //alert(data);
-
                 $('#filename').val(JSON.parse(data).fn);
+                //alert('#filename').val();
             }
 
         });
     });
+
+
 
 </script>

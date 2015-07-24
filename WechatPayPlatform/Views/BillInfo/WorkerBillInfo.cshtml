@@ -141,7 +141,7 @@
                                             <input type="hidden" name="adminid" value="@ViewData["adminid"]" />
                                             <input type="hidden" name="billnumber" value="@sitem.innerNumber" />
                                             <p class="buttonp">
-                                                <button class="btn btn-default" type="submit" style=" font-family:'Microsoft YaHei'; font-size:small;font-weight:400; color: #FFF;"> 确认接单</button>
+                                                <button class="btn " type="submit" style=" font-family:'Microsoft YaHei'; font-size:small;font-weight:400; color: #FFF;"> 确认接单</button>
                                             </p>
                                         }
                                         using (Html.BeginForm("CancelBill", "ComeBill", FormMethod.Post, new { role = "form", @class = "form-inline" }))
@@ -149,7 +149,7 @@
                                             <input type="hidden" name="adminid" value="@ViewData["adminid"]" />
                                             <input type="hidden" name="billnumber" value="@sitem.innerNumber" />
                                             <p class="buttonp">
-                                                <button class=" btn btn-default" id="cancel" style=" font-family:'Microsoft YaHei'; font-size:small;font-weight:400; color: #FFF;" onclick="cancelBill(@sitem.innerNumber)"> 取消订单</button>
+                                                <button class=" btn " id="cancel" style=" font-family:'Microsoft YaHei'; font-size:small;font-weight:400; color: #FFF;" onclick="cancelBill(@sitem.innerNumber)"> 取消订单</button>
                                             </p>
                                         }
                                     }
@@ -160,7 +160,7 @@
                                             <input type="hidden" name="adminid" value="@ViewData["adminid"]" />
                                             <input type="hidden" name="billnumber" value="@sitem.innerNumber" />
                                             <p class="buttonp">
-                                                <button class="btn btn-default" type="submit" style=" font-family:'Microsoft YaHei' ;font-size:small;font-weight:400; color: #FFF;">已完成</button>
+                                                <button class="btn " type="submit" style=" font-family:'Microsoft YaHei' ;font-size:small;font-weight:400; color: #FFF;">已完成</button>
                                             </p>
                                         }
                                     }

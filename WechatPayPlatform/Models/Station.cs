@@ -33,6 +33,10 @@ namespace WechatPayPlatform.Models
         public double? LocationX { get; set; }
 
         public double? LocationY { get; set; }
+
+        public int? StartWorkHour { get; set; }
+
+        public int? EndWorkHour { get; set; }
     }
 
     public class Area

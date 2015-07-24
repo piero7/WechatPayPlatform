@@ -1,16 +1,12 @@
 ﻿@model WechatPayPlatform.Models.ComeBill
-
 @{
     ViewBag.Title = "确认支付";
 }
-
 @section scripts{
     @Scripts.Render("~/Scripts/labs.js")
     @Scripts.Render("~/Scripts/jquery.raty.js")
     @Styles.Render("~/Content/jquery.raty.css")
-
 }
-
 
 <style>
     div {
@@ -18,9 +14,10 @@
         font-size: 1em;
     }
 
-    label{
-        margin-bottom:0px;
+    label {
+        margin-bottom: 0px;
     }
+
     .billstatus {
         font-weight: 700;
         font-family: 'Microsoft YaHei';
@@ -35,8 +32,8 @@
 
     .btn {
         background-color: rgba(228, 143, 24,1);
-        width:100%;
-        font-size:1.5em;
+        width: 100%;
+        font-size: 1.5em;
     }
 
     .container-fluid {
@@ -48,17 +45,17 @@
         padding-left: 25px;
     }
 
-    .sc{
-        width:100%;
-        padding-top : 25px;
-        padding-bottom :25px;
-    } 
-    .sc .scimag{
-        font-size:2em;
-        padding-left:25px;
+    .sc {
+        width: 100%;
+        padding-top: 15px;
+        padding-bottom: 25px;
     }
-</style>
 
+        .sc .scimag {
+            font-size: 2em;
+            padding-left: 25px;
+        }
+</style>
 <div class="container-fluid">
     <div class=" thumbnail">
         <h3 class="billstatus">上门洗车</h3>
@@ -72,7 +69,7 @@
             <label>服务评价:</label>
             <div>
                 <span>速 度 </span>
-                <span id="s1" class="scimag" data-path="../images" ></span>
+                <span id="s1" class="scimag" data-path="../images"></span>
             </div>
             <div>
                 <span>清 洁 </span>
@@ -87,13 +84,16 @@
         @using (Html.BeginForm("Pay", "GetMoney", FormMethod.Post, new { role = "form", @class = "form-inline" }))
         {
             <input type="hidden" name="billnumber" value="@Model.innerNumber" />
+
+            <input type="hidden" id="sv1" name="s1" value="1" />
+            <input type="hidden" id="sv2" name="s2" value="2" />
+            <input type="hidden" id="sv3" name="s3" value="3" />
             <p class="buttonp">
                 <button class="btn btn-default" type="submit" style=" font-family:'Microsoft YaHei' ;font-size:large;font-weight:500; color: #FFF;">确认完成</button>
             </p>
         }
     </div>
 </div>
-
 <script type="text/javascript">
     var s1 = 0;
     var s2 = 0;
@@ -107,6 +107,7 @@
                 },
                 click: function (score, evt) {
                     s1 = score;
+                    $('#sv1').val(s1);
                 },
                 size: 8,
                 starOn: 'star-on-big.png',
@@ -119,7 +120,11 @@
                },
                click: function (score, evt) {
                    s2 = score;
-               }
+                   $('#sv2').val(s2);
+               },
+               size: 8,
+               starOn: 'star-on-big.png',
+               starOff: 'star-off-big.png',
            });
         $("#s3").raty(
            {
@@ -128,12 +133,16 @@
                },
                click: function (score, evt) {
                    s3 = score;
-               }
+                   $('#sv3').val(s3);
+               },
+               size: 8,
+               starOn: 'star-on-big.png',
+               starOff: 'star-off-big.png',
            });
 
         $('form').submit(function () {
             if (s1 == 0 || s2 == 0 || s3 == 0) {
-                alert('您还没有完成评分~您的意见是我们进步的指向。');
+                alert('您还没有完成评分,您的意见是我们进步的指向。');
                 return false;
             }
         });

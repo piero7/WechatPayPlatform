@@ -5,7 +5,7 @@
     .jumbotron {
         margin-top: 10%;
         padding-top: 10px;
-        background-color:transparent;
+        background-color: transparent;
     }
 
         .jumbotron h1 {
@@ -32,13 +32,14 @@
         width: 200px;
         margin-top: 10px;
     }
-    .jingao{
-        text-align:center;
-        color:orange;
-        font-family:"黑体";
-        font-style:italic;
-        font-size:1.5em;
-        display:none;
+
+    .jingao {
+        text-align: center;
+        color: orange;
+        font-family: "黑体";
+        font-style: italic;
+        font-size: 1.5em;
+        display: none;
     }
 </style>
 
@@ -57,15 +58,6 @@
         </div>
     </div>
     <p class="jingao">您扫描的不是指定设备二维码<br />请重试或联系我们</p>
-
-
-
-
-
-
-
-
-
 
     @using (Html.BeginForm(new { open = "123" }))
     {
@@ -142,7 +134,7 @@
             success: function (res) {
                 //alert(2);
                 var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-                //getMid(result);
+                getMid(result);
                 $(".jingao").show();
                 //$('#aaa').attr('href', result);
                 // $('#aaa').html(result);
@@ -152,29 +144,34 @@
     }
 
     function getMid(res){
-
-        $.ajax({
-            type:'POST',
-            url:'/../../api/PayInfo/GetMid',
-            data:{'':res},
-            success:function(data){
-                alert(data);
-            },
-            errot:function(data, status, e){
-                alert("err");
-            }
+        $.get('~/../../api/PayInfo/GetMachineId',{'res':res},function(data){
+            alert(data);
+            $('#mid').val(data);
+            $('form').submit(null);
         });
 
-        $.post('/../../api/PayInfo/GetMid',{'':'http://weixin.qq.com/q/bHU8K-LlSV0w4appqFnv'},function(data){
-            alert(data);
-            if(data ==0){
+        //$.ajax({
+        //    type:'POST',
+        //    url:'/../../api/PayInfo/GetMid',
+        //    data:{'':res},
+        //    success:function(data){
+        //        alert(data);
+        //    },
+        //    errot:function(data, status, e){
+        //        alert("err");
+        //    }
+        //});
 
-            }
-            else {
-                $('#mid').val(data);
-                $('form').submit(null);
-            }
-        },'json');
+        //$.post('/../../api/PayInfo/GetMid',{'':'http://weixin.qq.com/q/bHU8K-LlSV0w4appqFnv'},function(data){
+        //    alert(data);
+        //    if(data ==0){
+
+        //    }
+        //    else {
+        //        $('#mid').val(data);
+        //        $('form').submit(null);
+        //    }
+        //},'json');
     }
 
 </script>

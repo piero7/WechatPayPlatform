@@ -169,7 +169,9 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PayController.cs" />
     <Compile Include="Controllers\PayInfoController.cs" />
+    <Compile Include="Controllers\ShopHelpController.cs" />
     <Compile Include="Controllers\SocketController.cs" />
+    <Compile Include="Controllers\WorkTimeController.cs" />
     <Compile Include="Migrations\201505031559442_addbill.cs" />
     <Compile Include="Migrations\201505031559442_addbill.Designer.cs">
       <DependentUpon>201505031559442_addbill.cs</DependentUpon>
@@ -258,9 +260,44 @@
     <Compile Include="Migrations\201507160125487_addLocationInfo.Designer.cs">
       <DependentUpon>201507160125487_addLocationInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201507190702482_addshopTime.cs" />
+    <Compile Include="Migrations\201507190702482_addshopTime.Designer.cs">
+      <DependentUpon>201507190702482_addshopTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507191709435_addvillage.cs" />
+    <Compile Include="Migrations\201507191709435_addvillage.Designer.cs">
+      <DependentUpon>201507191709435_addvillage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507201025307_addScore.cs" />
+    <Compile Include="Migrations\201507201025307_addScore.Designer.cs">
+      <DependentUpon>201507201025307_addScore.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507201136421_addWorkTime.cs" />
+    <Compile Include="Migrations\201507201136421_addWorkTime.Designer.cs">
+      <DependentUpon>201507201136421_addWorkTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507201533353_addShopScore.cs" />
+    <Compile Include="Migrations\201507201533353_addShopScore.Designer.cs">
+      <DependentUpon>201507201533353_addShopScore.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507231602058_test.cs" />
+    <Compile Include="Migrations\201507231602058_test.Designer.cs">
+      <DependentUpon>201507231602058_test.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507231754127_addWorkHourForStation.cs" />
+    <Compile Include="Migrations\201507231754127_addWorkHourForStation.Designer.cs">
+      <DependentUpon>201507231754127_addWorkHourForStation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507232043128_addMachineAdmin.cs" />
+    <Compile Include="Migrations\201507232043128_addMachineAdmin.Designer.cs">
+      <DependentUpon>201507232043128_addMachineAdmin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507232044328_addMachineAdminCount.cs" />
+    <Compile Include="Migrations\201507232044328_addMachineAdminCount.Designer.cs">
+      <DependentUpon>201507232044328_addMachineAdminCount.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Bill.cs" />
     <Compile Include="Models\DebugInfo.cs" />
-    <Compile Include="Models\Foreign.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\Machine.cs" />
     <Compile Include="Models\PayParms.cs" />
@@ -280,9 +317,11 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Code.cs" />
     <Compile Include="Models\ModelContext.cs" />
+    <Compile Include="Models\Score.cs" />
     <Compile Include="Models\Shop.cs" />
     <Compile Include="Models\Station.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\WorkTime.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Wechat.ashx.cs">
       <DependentUpon>Wechat.ashx</DependentUpon>
@@ -384,7 +423,23 @@
     <None Include="Properties\PublishProfiles\WebApiToFile.pubxml" />
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Icon.png" />
+    <Content Include="Images\address.png" />
+    <Content Include="Images\cancel-off.png" />
+    <Content Include="Images\cancel-on.png" />
     <Content Include="Images\carpoint.png" />
+    <Content Include="Images\phone.png" />
+    <Content Include="Images\shophour.png" />
+    <Content Include="Images\star-half.png" />
+    <Content Include="Images\star-off-big.png" />
+    <Content Include="Images\star-off.png" />
+    <Content Include="Images\star-on-big.png" />
+    <Content Include="Images\star-on.png" />
+    <Content Include="Images\star0.png" />
+    <Content Include="Images\star1.png" />
+    <Content Include="Images\star2.png" />
+    <Content Include="Images\star3.png" />
+    <Content Include="Images\star4.png" />
+    <Content Include="Images\star5.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.9.1.js" />
@@ -457,6 +512,9 @@
     <Content Include="Views\GetMoney\PayForMachineIndex.cshtml" />
     <Content Include="Views\Shop\Index.cshtml" />
     <Content Include="Views\Shop\AddInfo.cshtml" />
+    <Content Include="Views\ComeBill\NotFinishedBill.cshtml" />
+    <Content Include="Views\WorkTime\Index.cshtml" />
+    <Content Include="Views\Shop\ShopDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -537,6 +595,33 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201507160125487_addLocationInfo.resx">
       <DependentUpon>201507160125487_addLocationInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507190702482_addshopTime.resx">
+      <DependentUpon>201507190702482_addshopTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507191709435_addvillage.resx">
+      <DependentUpon>201507191709435_addvillage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507201025307_addScore.resx">
+      <DependentUpon>201507201025307_addScore.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507201136421_addWorkTime.resx">
+      <DependentUpon>201507201136421_addWorkTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507201533353_addShopScore.resx">
+      <DependentUpon>201507201533353_addShopScore.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507231602058_test.resx">
+      <DependentUpon>201507231602058_test.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507231754127_addWorkHourForStation.resx">
+      <DependentUpon>201507231754127_addWorkHourForStation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507232043128_addMachineAdmin.resx">
+      <DependentUpon>201507232043128_addMachineAdmin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507232044328_addMachineAdminCount.resx">
+      <DependentUpon>201507232044328_addMachineAdminCount.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -33,6 +33,15 @@ namespace WechatPayPlatform.Models
         /// </summary>
         public double? Minimum { get; set; }
 
+        /// <summary>
+        /// 营业时间
+        /// </summary>
+        public string ShopHours { get; set; }
+
+        public int? ScoreId { get; set; }
+
+        [ForeignKey("ScoreId")]
+        public virtual Score Score { get; set; }
     }
 
 

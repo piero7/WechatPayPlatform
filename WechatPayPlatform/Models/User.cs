@@ -119,6 +119,12 @@ namespace WechatPayPlatform.Models
         [ForeignKey("StationId")]
         public virtual Station Station { get; set; }
 
+        public double? Price { get; set; }
+
+        public double? LocationX { get; set; }
+
+        public double? LocationY { get; set; }
+
         public string Reamarks { get; set; }
     }
 
@@ -150,7 +156,7 @@ namespace WechatPayPlatform.Models
         Unknown = 0,
         Service = 1,
         Company = 2,
-        Js=3,
+        Js = 3,
     }
 
 }

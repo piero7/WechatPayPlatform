@@ -22,10 +22,18 @@ namespace WechatPayPlatform.Controllers
                 // return RedirectToAction("IndexWithOpenid", "BillInfo", (object)"testtest");
             }
             var helper = new PayInfoController();
-            var openid = helper.GetOpenidByCode(code);
+            var openid = string.Empty;
+            openid = helper.GetOpenidByCode(code);
 
-            return RedirectToAction("IndexWithOpenid", "BillInfo", new { openid = openid });
+            return RedirectToAction("IndexWithOpenid", "BillInfo", new { open = openid });
 
+        }
+
+        public ActionResult IndexWithId(int userid)
+        {
+            var db = new ModelContext();
+            var user = db.WechatUserSet.Find(userid);
+            return IndexWithOpenid(user.OpenId);
         }
 
         public ActionResult IndexWithOpenid(string openid)
@@ -166,8 +174,8 @@ namespace WechatPayPlatform.Controllers
             var db = new ModelContext();
             //int year = 2015;
             // int mou = 7;
-          //  ViewBag.year = year;
-         //   ViewBag.mou = mou;
+            //  ViewBag.year = year;
+            //   ViewBag.mou = mou;
 
             //int count = 0;
             //var startTime = new DateTime(year , mou,1);
@@ -181,7 +189,7 @@ namespace WechatPayPlatform.Controllers
 
             //获取当月新增有限用户数 
             // TODO 逻辑待验证
-           // var userIdList = db.ComeBillSet.Where(item => item.Status == ComeBillStatus.Finish).Select(item => item.UserId).Distinct().ToList();
+            // var userIdList = db.ComeBillSet.Where(item => item.Status == ComeBillStatus.Finish).Select(item => item.UserId).Distinct().ToList();
             //foreach (var userId in userIdList)
             //{
             //    var firbill = db.ComeBillSet.Where(item => item.UserId == userId).OrderBy(item => item.CreateDate).FirstOrDefault();
@@ -190,19 +198,19 @@ namespace WechatPayPlatform.Controllers
             //        count++;
             //    }
             //}
-            var count = db.ComeBillSet.Count(item =>((item.PayDate??new DateTime(0)).Month == mou)
-                &&item.Status == ComeBillStatus.Finish
+            var count = db.ComeBillSet.Count(item => ((item.PayDate ?? new DateTime(0)).Month == mou)
+                && item.Status == ComeBillStatus.Finish
                 && item.ComeBillTypeId == 1);
 
-            
+
 
             ViewBag.usercount = count;
-            ViewBag.tocom = db.ComeBillSet.Count(item =>item.CreateDate.Value.Month == mou && item.Status == ComeBillStatus.ToConfirm);
+            ViewBag.tocom = db.ComeBillSet.Count(item => item.CreateDate.Value.Month == mou && item.Status == ComeBillStatus.ToConfirm);
             ViewBag.todo = db.ComeBillSet.Count(item => item.CreateDate.Value.Month == mou && item.Status == ComeBillStatus.Working);
 
             ViewBag.topay = db.ComeBillSet.Count(item => item.FinishTime.Value.Month == mou && item.Status == ComeBillStatus.ToPay);
             ViewBag.finish = db.ComeBillSet.Count(item => item.FinishTime.Value.Month == mou && item.Status == ComeBillStatus.Finish);
-            ViewBag.cancel = db.ComeBillSet.Count(item =>item.FinishTime.Value.Month == mou && item.Status == ComeBillStatus.Cancel);
+            ViewBag.cancel = db.ComeBillSet.Count(item => item.FinishTime.Value.Month == mou && item.Status == ComeBillStatus.Cancel);
 
             return View();
         }
@@ -216,6 +224,6 @@ namespace WechatPayPlatform.Controllers
             return View(bill);
         }
 
-    } 
+    }
 }
 

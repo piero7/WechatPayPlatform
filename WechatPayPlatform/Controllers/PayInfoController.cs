@@ -42,7 +42,7 @@ namespace WechatPayPlatform.Controllers
                         {
                             if (bill.Count == 1)
                             {
-                               // bill.User.Balance += 23;
+                                // bill.User.Balance += 23;
                             }
                             else
                             {
@@ -111,6 +111,7 @@ namespace WechatPayPlatform.Controllers
                 prePayDic.Add("trade_type", "JSAPI");
                 prePayDic.Add("openid", openid);
 
+                bill.OrderId = orderid;
 
                 string sign = Helper.GetMD5(prePayDic);
                 prePayDic.Add("sign", sign);
@@ -343,6 +344,18 @@ namespace WechatPayPlatform.Controllers
         }
 
         [HttpGet]
+        public int GetMachineId(string res)
+        {
+            var db = new ModelContext();
+            var m = db.MachineCodeSet.Include("Machine").FirstOrDefault(item => item.Content == res);
+            if (m == null || m.Machine == null)
+            {
+                return 0;
+            }
+            return m.MachineId.Value;
+        }
+
+        [HttpGet]
         public object HasSales(string openid)
         {
             var db = new ModelContext();
@@ -531,18 +544,17 @@ namespace WechatPayPlatform.Controllers
 
         }
 
-        internal static void SendWorkMessage(int adminid, string location, CarInfo car, string desc, string time)
+        internal static void SendWorkMessage(string adminid, string location, CarInfo car, string desc, string time)
         {
             // 新订单通知\n\n位置：小区\n车牌号：沪A12345\n描述：啊啊啊啊啊啊啊啊啊\n服务时间：6/17 12:20~13:20\n<a href=//\"http://www.baiud.com\">点击确认</a>\">
 
             string msg = "新订单通知\n\n位置:{0}\n车牌号:{1}\n描述:{2}\n服务时间:{3}\n<a href=\\\"{4}\\\">点击确认</a>";
             msg = string.Format(msg, location, car.CarNumber, desc, time, System.Configuration.ConfigurationManager.AppSettings["baseurl"] + "/BillInfo/WorkerBillInfo?adminid=" + adminid.ToString());
             var db = new ModelContext();
-            var admin = db.AdminSet.Find(adminid);
+            //var admin = db.AdminSet.Find(adminid);
 
-            SendComponyMessage("@all", msg);
+            SendComponyMessage(adminid.ToString(), msg);
         }
-
 
 
         internal static void SendComponyMessage(string account, string msg)
@@ -598,6 +610,10 @@ namespace WechatPayPlatform.Controllers
             return enText.ToString();
         }
 
+        /// <summary>
+        /// 支付通知
+        /// </summary>
+        /// <param name="bill"></param>
         public static void SendFinishCleanMsg(ComeBill bill)
         {
             string msgModle = "{{\"touser\":\"{0}\",\"template_id\":\"Tlkdx1KtnMzGql-cQcO_AakMBxlXX3Ry_DqeovadPjA\",\"url\":\"{1}\",\"topcolor\":\"#FF0000\",\"data\":{{\"first\":{{\"value\":\"{2}\",\"color\":\"#173177\"}},\"ordertape\":{{\"value\":\"{3}\",\"color\":\"#173177\"}},\"ordeID\":{{\"value\":\"{4}\",\"color\":\"#173177\"}},\"remark\":{{\"value\":\"{5}！\",\"color\":\"#173177\"}}}}}}";
@@ -613,7 +629,46 @@ namespace WechatPayPlatform.Controllers
             Helper.GetResponse(msgModle, url);
         }
 
+        /// <summary>
+        /// 发送确认接单通知
+        /// </summary>
+        /// <param name="bill"></param>
+        public static void SendConfirmMsg(ComeBill bill)
+        {
+            string msgModle = "{{\"touser\":\"{0}\",\"template_id\":\"5f6csSrXs9Jz1UknK-bA2Mf9g2DB2FdMHR_Ouc-nOyc\",\"url\":\"{1}\",\"topcolor\":\"#FF0000\",\"data\":{{\"first\":{{\"value\":\"{2}\",\"color\":\"#173177\"}},\"keyword1\":{{\"value\":\"{3}\",\"color\":\"#173177\"}},\"keyword2\":{{\"value\":\"{4}\",\"color\":\"#173177\"}},\"keyword3\":{{\"value\":\"{5}\",\"color\":\"#173177\"}},\"remark\":{{\"value\":\"{6}\",\"color\":\"#173177\"}}}}}}";
+            string jurl = System.Configuration.ConfigurationManager.AppSettings["baseurl"] + "/billinfo/IndexWithId?billnumber=" + bill.UserId;
+            msgModle = string.Format(msgModle,
+                bill.User.OpenId,
+                jurl,
+                "尊敬的客户您好，您的订单已被确认接单。",
+                bill.innerNumber,
+                bill.Count + " 元",
+                bill.CreateDate.Value.ToString("MM月dd日 HH:mm"),
+                "我们将会在您预约的时间为您服务。"
+                );
+            string url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + Helper.GetToken(AccountType.Service);
+            Helper.GetResponse(msgModle, url);
+        }
 
+        /// <summary>
+        /// 发送取消订单通知
+        /// </summary>
+        /// <param name="bill"></param>
+        public static void SendCancelMsg(ComeBill bill)
+        {
+            string msgModle = "{{\"touser\":\"{0}\",\"template_id\":\"cGQ8AJ4cAX25HowY6xzn_qVpWioAhsWUQ4sfVy06R24\",\"url\":\"{1}\",\"topcolor\":\"#FF0000\",\"data\":{{\"first\":{{\"value\":\"{2}\",\"color\":\"#173177\"}},\"keyword1\":{{\"value\":\"{3}\",\"color\":\"#173177\"}},\"keyword2\":{{\"value\":\"{4}\",\"color\":\"#173177\"}},\"remark\":{{\"value\":\"{5}\",\"color\":\"#173177\"}}}}}}";
+            string jurl = System.Configuration.ConfigurationManager.AppSettings["baseurl"] + "/billinfo/IndexWithId?billnumber=" + bill.UserId;
+            msgModle = string.Format(msgModle,
+                bill.User.OpenId,
+                jurl,
+                "尊敬的客户您好，您的订单已取消。",
+                "上门洗车",
+                bill.CreateDate.Value.ToString("MM月dd日 HH:mm"),
+                "很遗憾没能为您服务，欢迎下次预约，若有疑问请直接在公众号中回复或拨打客服热线4001008262。"
+                );
+            string url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" + Helper.GetToken(AccountType.Service);
+            Helper.GetResponse(msgModle, url);
+        }
 
     }
 }
